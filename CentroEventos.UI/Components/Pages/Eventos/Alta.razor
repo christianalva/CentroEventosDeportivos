@@ -1,0 +1,120 @@
+@page "/eventos/alta"
+@rendermode InteractiveServer
+
+@inject EventoDeportivoAltaUseCase altaEvento
+@inject IServicioSesion servicioSesion
+
+
+
+@if (_mensajeError.Any())
+{
+    <ul class="alerta-error">
+        @foreach (var error in _mensajeError)
+        {
+            <li>@error</li>
+        }
+    </ul>
+}
+
+@if (!string.IsNullOrEmpty(_mensajeExito))
+{
+  <div class="alert alerta-exito">@_mensajeExito</div>
+}
+
+
+@if(permitirAlta){
+    <div class="pagina-modulo">
+        <div class="contenedor-modulo">
+          <h2 class="titulo-modulo">Alta de Eventos</h2>
+
+          <div class="grupo-campo">
+            <label class="etiqueta-campo">Nombre</label>
+            <input type="text" class="campo-texto" @bind="_e.Nombre" />
+          </div>
+
+          <div class="grupo-campo">
+            <label class="etiqueta-campo">Descripcion</label>
+            <textarea @bind="_e.Descripcion" />
+          </div>
+
+          <div class="grupo-campo">
+            <label class="etiqueta-campo">Fecha y hora de Inicio</label>
+            <input type="datetime" class="campo-texto" @bind="_e.FechaHoraInicio" />
+          </div>
+
+          <div class="grupo-campo">
+            <label class="etiqueta-campo">Duracion (en horas)</label>
+            <input type="number" class="campo-texto" @bind="_e.DuracionHoras" />
+          </div>
+
+          <div class="grupo-campo">
+            <label class="etiqueta-campo">Cupo Maximo</label>
+            <input type="number" class="campo-texto" @bind="_e.CupoMaximo" />
+          </div>
+
+          <div class="grupo-campo">
+            <label class="etiqueta-campo">Id Responsable</label>
+            <input type="number" class="campo-texto" @bind="_e.ResponsableId" />
+          </div>
+
+
+            <button class="boton-principal boton-guardar" @onclick="Agregar">Agregar</button>
+
+        </div>
+    </div>
+
+}
+
+
+
+@code{
+    List<string> _mensajeError = new();
+    string _mensajeExito = "";
+
+    private Usuario? usuarioEnSesion;
+    private bool permitirAlta = false;
+    private EventoDeportivo _e = new EventoDeportivo();
+    protected override void OnInitialized()
+    {
+        var usuario = servicioSesion.UsuarioActual;
+    
+        if (usuario == null)
+        {
+          _mensajeError.Add("Debes iniciar sesión para dar de alta eventos.");
+          return;
+        }
+
+        if(!servicioSesion.UsuarioActual!.Permisos.Contains(CentroEventos.Aplicacion.Enums.Permiso.UsuarioAlta)){
+            _mensajeError.Add("No posee los permisos para realizar esta operacion.");
+        }else{
+            permitirAlta = true;
+        }
+    }
+
+    private void Agregar(){
+        _mensajeError = new();
+        _mensajeExito = "";
+        
+        try{
+            altaEvento.Ejecutar(_e);
+            _mensajeExito = "Evento Deportivo agregado correctamente.";
+            _e = new EventoDeportivo();
+        }
+        catch (CentroEventos.Aplicacion.Excepciones.ValidacionException ex)
+        {
+           var partes = ex.Message.Split(" • ");
+            _mensajeError.AddRange(partes);
+        }
+        catch (CentroEventos.Aplicacion.Excepciones.FalloAutorizacionException ex)
+        {
+          _mensajeError.Add(ex.Message);
+        }
+        catch (CentroEventos.Aplicacion.Excepciones.EntidadNotFoundException ex)
+        {
+          _mensajeError.Add(ex.Message);
+        }
+
+    }
+
+
+}

@@ -1,0 +1,170 @@
+@page "/usuario/modificar/{usuarioId:int?}"
+@using CentroEventos.Aplicacion.CasosDeUso.Usuarios
+@using CentroEventos.Aplicacion.Entidades
+@using CentroEventos.Aplicacion.Enums
+@inject ModificarUsuarioUseCase modificarUsuario
+@inject NavigationManager navManager
+@inject IServicioSesion servicioSesion
+
+@if (_errores.Any())
+{
+    <ul class="alerta-error">
+        @foreach (var error in _errores)
+        {
+            <li>@error</li>
+        }
+    </ul>
+}
+
+@if (!string.IsNullOrEmpty(_mensajeExito))
+{
+  <div class="alert alerta-exito">@_mensajeExito</div>
+}
+
+@*  
+   - Si es admin: modo busqueda (si no vino usuarioId) o carga directa (si vino)  
+   - Si no es admin: siempre edita su propio registro  
+*@
+@if (!permitirBusqueda && usuarioSeleccionado!= null)
+{
+    @* Si ya cargue el usuario para editar, muestro el formulario *@
+    <div class="pagina-modulo">
+        <div class="contenedor-modulo">
+            <h2 class="titulo-modulo">Modificar Usuario</h2>
+
+            <div class="grupo-campo">
+                <label class="etiqueta-campo">Nombre</label>
+                <input class="campo-texto" @bind="usuarioCopia.Nombre"/>
+            </div>
+
+            <div class="grupo-campo">
+                <label class="etiqueta-campo">Apellido</label>
+                <input class="campo-texto" @bind="usuarioCopia.Apellido" />
+            </div>
+
+            <div class="grupo-campo">
+                <label class="etiqueta-campo">Email</label>
+                <input type="email" class="campo-texto" @bind="usuarioCopia.Email" />
+            </div>
+
+            <div class="grupo-campo">
+                <label class="etiqueta-campo">Nueva Contraseña (Opcional)</label>
+                <input type="password" class="campo-texto"@bind="usuarioCopia.Password" placeholder="Dejar en blanco para conservar actual" />
+            </div>
+
+            <button class="boton-principal boton-guardar"@onclick="GuardarCambios">Guardar Cambios</button>
+        </div>
+    </div>
+}
+else if(usuarioEnSesion != null){
+    @* Modo busqueda: solo admin sin usuarioId *@
+    <div class="contenedor-buscar">
+        <h2 class="buscar-titulo">Buscar Usuario a Modificar</h2>
+        <div class="buscar-form">
+            <label class="buscar-label">Ingrese el ID del usuario</label>
+            <input type="number" class="buscar-input" @bind="IdBusqueda" />
+        </div>
+        <button class="buscar-boton" @onclick="BuscarUsuario">Buscar Usuario</button>
+    </div>
+}
+
+@code {
+    [Parameter]  
+    public int? usuarioId { get; set; }
+    private Usuario? usuarioSeleccionado;
+    private Usuario? usuarioEnSesion;
+    private Usuario  usuarioCopia = new();    
+    private List<string> _errores = new();
+    private string _mensajeExito = "";
+    private bool permitirBusqueda;
+    private int? IdBusqueda;
+    private bool poseePermiso;
+
+    protected override void OnParametersSet()
+    {
+        usuarioEnSesion = servicioSesion.UsuarioActual;
+        if (usuarioEnSesion == null)
+        {
+            _errores.Add("Debe iniciar sesion.");
+            return;
+        }
+        poseePermiso = usuarioEnSesion.Permisos?.Contains(Permiso.UsuarioModificacion) ?? false;       
+        if (!poseePermiso || usuarioId == usuarioEnSesion.Id)
+        {
+            usuarioSeleccionado = modificarUsuario.ObtenerParaModificar(usuarioEnSesion.Id);
+            prepararCopia();
+            permitirBusqueda = false;
+        }
+        else if (poseePermiso && usuarioId.HasValue)
+        {        
+            usuarioSeleccionado = modificarUsuario.ObtenerParaModificar(usuarioId.Value);
+            prepararCopia();
+            permitirBusqueda = false;
+        }
+        else
+        {
+            permitirBusqueda = true;
+        }
+    }
+
+    private void BuscarUsuario()
+    {
+        _errores = new();
+        _mensajeExito = "";
+        if (IdBusqueda.HasValue)
+        {
+            try
+            {
+                usuarioSeleccionado = modificarUsuario.ObtenerParaModificar(IdBusqueda.Value);
+                prepararCopia();
+                permitirBusqueda = false;
+            } catch (CentroEventos.Aplicacion.Excepciones.EntidadNotFoundException ex){
+                _errores.Add(ex.Message);
+            } catch (CentroEventos.Aplicacion.Excepciones.FalloAutorizacionException ex){
+                _errores.Add(ex.Message);
+            } catch (Exception ex)
+            {
+                _errores.Add(ex.Message);
+            }
+        }
+        else{
+            _errores.Add("ID invalido.");
+        } 
+    }
+
+    private void prepararCopia()
+    {
+        usuarioCopia = new Usuario
+        {
+            Id = usuarioSeleccionado!.Id,
+            Nombre = usuarioSeleccionado.Nombre,
+            Apellido = usuarioSeleccionado.Apellido,
+            Email = usuarioSeleccionado.Email,
+            Password = string.Empty
+        };
+    }
+
+    private void GuardarCambios()
+    {
+        _mensajeExito = "";
+        _errores = new();
+        try
+        {
+            modificarUsuario.Ejecutar(usuarioCopia);  
+            _mensajeExito = "Usuario modificado correctamente.";
+            if(poseePermiso){
+                permitirBusqueda = true;
+            }
+
+        } catch (CentroEventos.Aplicacion.Excepciones.ValidacionException ex){
+            var partes = ex.Message.Split(" • ");
+            _errores.AddRange(partes);
+        } catch (CentroEventos.Aplicacion.Excepciones.DuplicadoException ex){
+            _errores.Add(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _errores.Add(ex.Message);
+        }
+    }
+}

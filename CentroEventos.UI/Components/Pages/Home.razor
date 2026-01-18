@@ -1,0 +1,64 @@
+@page "/home"
+@rendermode InteractiveServer
+@inject IServicioSesion ServicioSesion
+@inject NavigationManager NavigationManager
+@inject EventosDeportivosActivos eventosDeportivosActivos
+@inject ContarPersonas contarPersonas
+@inject ReservasRealizadas reservasRealizadas
+@inject ListarEventosConCupoDisponibleUseCase eventosConCupoDisponible
+ 
+
+<PageTitle>Panel</PageTitle>
+
+@if (ServicioSesion.EstaLogueado)
+{
+    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; width: auto; min-height: 200px;">
+        <h1 style="color:white">Sistema de Gestión del Centro Deportivo Universitario</h1>
+        <h2 style="color:white; margin-top: 30px;">Bienvenido <b style="color: rgb(173, 37, 37);">@ServicioSesion.UsuarioActual!.Nombre</b>!</h2>
+        
+    </div>
+    <div class="dashboard">
+        <div class="card">
+            <h3>Personas Registradas</h3>
+            <p>@contarP</p>            
+        </div>
+        <div class="card">
+            <h3>Eventos Activos</h3>
+            <p>@eventosActivos</p>            
+        </div>
+        <div class="card">
+            <h3>Reservas Realizadas</h3>
+            <p>@reservasR</p>            
+        </div>
+        <div class="card">
+            <h3>Eventos con cupo disponible</h3>
+            <p>@eventosConCupoInt</p>            
+        </div>
+
+    </div>
+}
+
+@code{
+    private int eventosActivos;
+    private int contarP;
+    private int reservasR;
+    private List<EventoDeportivo>? eventosConCupo;
+    private int eventosConCupoInt;
+
+    protected override void OnInitialized(){
+        eventosActivos = eventosDeportivosActivos.Ejecutar();
+        contarP = contarPersonas.Ejecutar();
+        reservasR = reservasRealizadas.Ejecutar();
+        try{
+            eventosConCupo = eventosConCupoDisponible.Ejecutar();
+            eventosConCupoInt = eventosConCupo.Count();
+        }
+        catch 
+        {
+            eventosConCupoInt = 0;
+        }
+        
+    }
+
+
+}

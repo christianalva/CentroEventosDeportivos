@@ -1,0 +1,140 @@
+@page "/reservas/listar"
+@rendermode InteractiveServer
+@inject ListarReservasUseCase listarReserva
+@inject ReservaBajaUseCase eliminarReserva
+@inject ModificarReservaUseCase modificarReserva
+@inject NavigationManager navManager
+@inject IServicioSesion servicioSesion
+
+<DialogoConfirmacion @ref="dialogo" OnConfirmado="Eliminar"/>
+
+@if (_mensajeError.Any())
+{
+     <ul class="alerta-error">
+        @foreach (var error in _mensajeError)
+        {
+            <li>@error</li>
+        }
+    </ul>
+}
+
+
+@if(servicioSesion.EstaLogueado){
+    <div class="contenedor-listado">
+        <h2 class="titulo-listado">Listado de Reservas</h2>
+        <div class="pagina-contenedor">
+            <div class="contenedor-tabla">
+                <table class="tabla-usuarios">
+                    <thead>
+                        <tr>
+                            <th class="encabezado-tabla">ID</th>
+                            <th class="encabezado-tabla">Persona Id</th>
+                            <th class="encabezado-tabla">Evento Id</th>
+                            <th class="encabezado-tabla">Fecha Alta</th>
+                            <th class="encabezado-tabla">Estado Asistencia</th>
+                            <th class="encabezado-tabla">ACCIONES</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(var re in _lista)
+                        {
+                            <tr>
+                               <td>@re.Id</td>
+                               <td>@re.PersonaId</td>
+                               <td>@re.EventoDeportivoId</td>
+                               <td>@re.FechaAltaReserva</td>
+                               <td>@re.EstadoAsistencia</td>
+                               <td>
+                                    <div class="acciones-contenedor">
+                                        <button class="boton-editar" @onclick="()=>EditarEvento(re)">Editar</button>
+                                        <button class="boton-eliminar" @onclick="()=>ConfirmarEliminacion(re)">Eliminar</button>
+                                    </div>
+                               </td>
+                           </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+
+
+@code {
+    private List<Reserva> _lista = new List<Reserva>();
+    private List<string> _mensajeError = new();
+    private Usuario? usuarioEnSesion;
+    protected override void OnInitialized()
+    {
+        usuarioEnSesion = servicioSesion.UsuarioActual;
+        if(usuarioEnSesion == null){
+            _mensajeError.Add("Debe iniciar sesion.");
+        }
+    
+        _lista = listarReserva.Ejecutar();
+    }
+
+    DialogoConfirmacion dialogo = null!;
+    Reserva? _reservaAEliminar = null;
+
+    private void ConfirmarEliminacion(Reserva re)
+    {
+        _mensajeError = new();
+        if(servicioSesion.UsuarioActual!= null){
+            if(!servicioSesion.UsuarioActual.Permisos.Contains(CentroEventos.Aplicacion.Enums.Permiso.ReservaBaja)){
+                _mensajeError.Add("No cuenta con el permiso para Eliminar la Reserva.");
+                return;
+            }
+            _reservaAEliminar = re;
+            dialogo.SetMensaje($"¿Desea eliminar a la Reserva con ID {re.Id}?");
+            dialogo.Mostrar();
+        }
+        
+    }
+
+    private void Eliminar()
+    {
+        if (_reservaAEliminar != null)
+        {
+            try
+            {
+                eliminarReserva.Ejecutar(_reservaAEliminar.Id);
+                _lista = listarReserva.Ejecutar();
+            }
+            catch (CentroEventos.Aplicacion.Excepciones.FalloAutorizacionException ex)
+            {
+                _mensajeError.Add(ex.Message);
+            }
+            catch (CentroEventos.Aplicacion.Excepciones.EntidadNotFoundException ex)
+            {
+                _mensajeError.Add(ex.Message);
+            }
+            catch (CentroEventos.Aplicacion.Excepciones.OperacionInvalidaException ex)
+            {
+                _mensajeError.Add(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _mensajeError.Add(ex.Message);
+            }
+        }
+    }
+
+
+    private void EditarEvento(Reserva re)
+    {
+        _mensajeError = new();
+        if(servicioSesion.UsuarioActual != null){
+            // Verifico si el usuario actual tiene el permiso para modificar
+            if (!servicioSesion.UsuarioActual.Permisos.Contains(CentroEventos.Aplicacion.Enums.Permiso.ReservaModificacion))
+            {
+                _mensajeError.Add("No cuenta con el permiso para modificar la Reserva");
+                return;
+            }
+
+            // Si tiene permiso lo redirijo a la pagina de modificacion 
+            navManager.NavigateTo($"/reservas/modificar/{re.Id}");
+            }
+    }
+
+}

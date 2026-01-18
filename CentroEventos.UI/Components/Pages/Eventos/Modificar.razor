@@ -1,0 +1,184 @@
+@page "/eventos/modificar/{eventoId:int?}"
+@rendermode InteractiveServer
+@inject ModificarEventosUseCase modificarEvento
+@inject NavigationManager navManager
+@inject IServicioSesion servicioSesion
+
+@if (_mensajeError.Any())
+{
+    <ul class="alerta-error">
+        @foreach (var error in _mensajeError)
+        {
+            <li>@error</li>
+        }
+    </ul>
+}
+
+@if (!string.IsNullOrEmpty(_mensajeExito))
+{
+  <div class="alert alerta-exito">@_mensajeExito</div>
+}
+
+
+
+@if(eventoSeleccionado != null && usuarioEnSesion!=null){
+    <div class="pagina-modulo">
+        <div class="contenedor-modulo">
+            <h2 class="titulo-modulo">Modificar Evento Deportivo</h2>
+        
+            <div class="grupo-campo">
+                <label class="etiqueta-campo">Nombre</label>
+                <input class="campo-texto" @bind="eventoCopia!.Nombre" />
+            </div>
+
+            <div class="grupo-campo">
+              <label class="etiqueta-campo">Descripcion</label>
+              <textarea class="form-control" @bind="eventoCopia!.Descripcion" />
+            </div>
+
+            <div class="grupo-campo">
+              <label class="etiqueta-campo">Fecha y Hora de Inicio</label>
+              <input type="datetime" class="campo-texto" @bind="eventoCopia!.FechaHoraInicio" />
+            </div>
+
+            <div class="grupo-campo">
+              <label class="etiqueta-campo">Duracion (en horas)</label>
+              <input type="number" class="campo-texto" @bind="eventoCopia!.DuracionHoras" />
+            </div>
+
+            <div class="grupo-campo">
+              <label class="etiqueta-campo">Cupo Maximo</label>
+              <input type="number" class="campo-texto" @bind="eventoCopia!.CupoMaximo" />
+            </div>
+
+            <div class="grupo-campo">
+              <label class="etiqueta-campo">ID Responsable</label>
+              <input type="number" class="campo-texto" @bind="eventoCopia!.ResponsableId" />
+            </div>
+            <button type="submit" class="boton-principal boton-guardar" @onclick="GuardarCambios">Guardar Cambios</button>
+        
+        </div>
+    </div>
+
+} else if(permitirBusqueda){
+    <div class="contenedor-buscar">
+        <h2 class="buscar-titulo">Modificar Evento Deportivo</h2>
+        <div class="buscar-form">
+            <label class="buscar-label">Ingrese el ID del Evento Deportivo a Eliminar</label>
+            <input type="number" @bind="IdBusqueda" class="buscar-input"/>
+        </div>
+        <button class="buscar-boton" @onclick="BuscarEvento">Buscar Evento</button>
+    </div>
+}
+
+
+@code {
+    // Permite que el parámetro usuarioId se suministre desde la query string.
+    [Parameter]
+    public int? eventoId { get; set; }
+    private List<string> _mensajeError = new();
+    private string _mensajeExito = "";
+
+    private EventoDeportivo? eventoSeleccionado;
+    private EventoDeportivo? eventoCopia = new();
+    private bool permitirBusqueda = false;
+    private Usuario? usuarioEnSesion;
+    private int? IdBusqueda;
+
+    protected override void OnInitialized(){
+
+        usuarioEnSesion = servicioSesion.UsuarioActual;
+        if (usuarioEnSesion == null)
+        {
+            _mensajeError.Add("Debe iniciar sesion.");
+            return;
+        }
+
+        if(servicioSesion.UsuarioActual != null){
+            if(!servicioSesion.UsuarioActual.Permisos.Contains(CentroEventos.Aplicacion.Enums.Permiso.EventoModificacion)){
+                _mensajeError.Add("No posee el Permiso para realizar esta operacion.");
+                permitirBusqueda = false;
+                return;
+            } 
+
+            // Si posee para modificar personas
+            // si se pasa el parametro por la url lo cargo automaticamente
+            if(eventoId.HasValue){
+                CargarEvento(eventoId.Value);
+                permitirBusqueda = false;
+            } else{
+                // si no se pasa por parametro a la persona habilito la opcion de busqueda 
+                permitirBusqueda = true;
+            }
+        } 
+    }
+
+
+    private void CargarEvento(int id){
+        _mensajeError.Clear();
+        try{
+            // Busco al evento a modificar dentro del caso de uso 
+            eventoSeleccionado = modificarEvento.ObtenerParaModificar(id);
+            prepararCopia();
+            if(eventoSeleccionado == null){
+                _mensajeError.Add($"No se encontro al Evento Deportivo con ID {id}.");
+            }
+        }
+        catch(CentroEventos.Aplicacion.Excepciones.EntidadNotFoundException ex){ 
+            _mensajeError.Add(ex.Message);
+        }
+        catch(CentroEventos.Aplicacion.Excepciones.FalloAutorizacionException ex){ 
+            _mensajeError.Add(ex.Message);
+        }
+    }
+
+    private void BuscarEvento(){
+        eventoSeleccionado = null;
+        if (IdBusqueda.HasValue)
+        {
+            CargarEvento(IdBusqueda.Value);
+        } else{
+            _mensajeError.Add("Debe ingresar un ID numérico valido.");
+        }
+    }
+
+    private void prepararCopia()
+    {
+        // Inicializo la copia con valores actuales
+        eventoCopia = new EventoDeportivo
+        {
+            Id = eventoSeleccionado!.Id,
+            Nombre = eventoSeleccionado.Nombre,
+            Descripcion = eventoSeleccionado.Descripcion,
+            FechaHoraInicio = eventoSeleccionado.FechaHoraInicio,
+            DuracionHoras = eventoSeleccionado.DuracionHoras,
+            CupoMaximo = eventoSeleccionado.CupoMaximo,
+            ResponsableId = eventoSeleccionado.ResponsableId
+        };
+    }
+
+    private void GuardarCambios(){
+        _mensajeError.Clear();
+        _mensajeExito = "";
+        if (eventoSeleccionado == null) return;
+
+        try
+        {
+            modificarEvento.Ejecutar(eventoCopia!);
+            _mensajeExito = "Cambios guardados correctamente.";
+            permitirBusqueda = true;
+            eventoSeleccionado = null;
+        }
+        catch (CentroEventos.Aplicacion.Excepciones.ValidacionException ex)
+        {
+            var partes = ex.Message.Split(" • ");
+            _mensajeError.AddRange(partes);
+        }
+        catch (CentroEventos.Aplicacion.Excepciones.OperacionInvalidaException ex)
+        {
+            _mensajeError.Add(ex.Message);
+        }
+
+    }
+
+}

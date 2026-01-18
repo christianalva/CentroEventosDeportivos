@@ -1,0 +1,157 @@
+@page "/usuario/modificarpermisos"
+@rendermode InteractiveServer
+
+@inject IServicioSesion ServicioSesion
+@inject ModificarPermisosUseCase ModificarPermisosUseCase
+
+
+@if (_mensajeError.Any())
+{
+     <ul class="alerta-error">
+        @foreach (var error in _mensajeError)
+        {
+            <li>@error</li>
+        }
+    </ul>
+}
+
+@if (!string.IsNullOrEmpty(_mensajeExito))
+{
+  <div class="alert alerta-exito">@_mensajeExito</div>
+}
+
+
+@if(permitirModificacion && usuario == null){
+    <div class="contenedor-buscar">
+        <h2 class="buscar-titulo">Buscar Usuario para Modificar Permisos</h2>
+        <div class="buscar-form">
+            <label class="buscar-label">Ingrese el ID de Usuario</label>
+            <input type="number" class="buscar-input" @bind="idUsuario" />
+            <button class="buscar-boton" @onclick="BuscarUsuario">Buscar</button>
+        </div>
+    </div>
+
+
+}
+
+@if (usuario != null)
+{
+
+    // Muestro los permisos del Usuario pasado por Id en forma de lista utilizando la clase que cree con su "bandera"
+    // Si el usuario posee el permiso la casilla se encuenta marcada sino no 
+    // De igual manera si quiero quitar un permiso solo basta con desmarcar la casilla y de lo contrario marcarla 
+    <div class="contenedor-permisos">
+        <h5 class="titulo-permisos">Permisos de <b>@usuario!.Nombre</b>:</h5>
+
+            <div class="lista-permisos">
+                @foreach (var opt in permisoOpciones)
+                {
+                    <div class="elemento-permiso">
+                        <input class="casilla-permiso" type="checkbox" @bind="opt.Asignado" id="@opt.Codigo" />
+                        <label class="etiqueta-permiso" for="@opt.Codigo">@opt.Codigo</label>
+                    </div>
+                }
+            </div>
+            <div class="contenedor-boton"><button class="boton-guardar" @onclick="Guardar">Guardar</button></div>
+    </div>
+
+
+}
+
+@code {
+    private int? idUsuario;
+    private Usuario? usuario;
+    private Usuario? usuarioEnSesion;
+    private List<PermisoOpcion> permisoOpciones = new(); 
+    private List<string> _mensajeError = new();
+    private string _mensajeExito = "";
+    private bool permitirModificacion;
+
+    protected override void OnInitialized(){
+        usuarioEnSesion = ServicioSesion.UsuarioActual;
+        if (usuarioEnSesion == null)
+        {
+            _mensajeError.Add("Debe iniciar sesion para realizar esta operacion.");
+            permitirModificacion = false;
+            return;
+        }
+
+        if(!ServicioSesion.UsuarioActual!.Permisos.Contains(CentroEventos.Aplicacion.Enums.Permiso.GestionUsuario)){ 
+            _mensajeError.Add("No posee los permisos para realizar esta operacion. ");
+        }else{
+            permitirModificacion = true;
+        }
+        
+    }
+
+
+    // Hago una clase en la que guardo el permiso y una "bandera" que me dice si tengo o no el permiso 
+    // La uso para dsps a la hora de mostrar los permisos en pantalla ver cuales posee y cuales no 
+    private class PermisoOpcion
+    {
+        public CentroEventos.Aplicacion.Enums.Permiso Codigo { get; set; }
+        public bool Asignado { get; set; } 
+    }
+
+    private void BuscarUsuario()
+    {
+        _mensajeExito = "";
+        _mensajeError = new();
+        permisoOpciones.Clear();
+        usuario = null;
+
+        if (idUsuario == null)
+        {
+            _mensajeError.Add("Ingresa un ID valido.");
+            return;
+        }
+
+        try
+        {
+            usuario = ModificarPermisosUseCase.ObtenerUsuario(idUsuario.Value); // Obtengo el Usuario 
+
+            permisoOpciones = Enum.GetValues<CentroEventos.Aplicacion.Enums.Permiso>() // Devuelvo un array con todos los valores del Enums 
+                                  .Cast<CentroEventos.Aplicacion.Enums.Permiso>()
+                                  .Select(p => new PermisoOpcion { // Construyo un PermisoOpcion para cada permiso 
+                                      Codigo  = p,
+                                      Asignado = usuario.Permisos.Contains(p) // Si el Usuario posee el permiso asigno true sino false
+                                  })
+                                  .ToList();
+        } catch (CentroEventos.Aplicacion.Excepciones.EntidadNotFoundException ex){
+            _mensajeError.Add(ex.Message);
+        } catch (CentroEventos.Aplicacion.Excepciones.FalloAutorizacionException ex){
+            _mensajeError.Add(ex.Message);
+        } catch (CentroEventos.Aplicacion.Excepciones.OperacionInvalidaException ex){
+            _mensajeError.Add(ex.Message);
+        }catch (Exception ex){
+            _mensajeError.Add(ex.Message);
+        }
+    }
+
+    private void Guardar()
+    {
+        _mensajeExito = "";
+        _mensajeError = new();
+        if (usuario == null) return;
+
+        // Contruyo una nueva lista con los nuevos permisos marcados en el checkbox 
+        var nuevos = permisoOpciones
+            .Where(o => o.Asignado)
+            .Select(o => o.Codigo)
+            .ToList();
+
+        try
+        {
+            ModificarPermisosUseCase.Ejecutar(usuario.Id, nuevos);
+            _mensajeExito = "Permisos actualizados correctamente.";
+        } catch (CentroEventos.Aplicacion.Excepciones.EntidadNotFoundException ex){
+            _mensajeError.Add(ex.Message);
+        } catch (CentroEventos.Aplicacion.Excepciones.FalloAutorizacionException ex){
+            _mensajeError.Add(ex.Message);
+        } catch (CentroEventos.Aplicacion.Excepciones.OperacionInvalidaException ex){
+            _mensajeError.Add(ex.Message);
+        } catch (Exception ex){
+            _mensajeError.Add(ex.Message);
+        }
+    }
+}

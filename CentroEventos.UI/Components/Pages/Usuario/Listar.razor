@@ -1,0 +1,136 @@
+@page "/usuario/listar"
+@rendermode InteractiveServer
+
+@inject ListarUsuarioUseCase listarUsuarios
+@inject UsuarioBajaUseCase eliminarUsuario
+@inject ModificarUsuarioUseCase modificarUsuario
+@inject NavigationManager navManager
+@inject IServicioSesion servicioSesion
+
+<DialogoConfirmacion @ref="dialogo" OnConfirmado="Eliminar"/>
+
+@if (_mensajeError.Any())
+{
+     <ul class="alerta-error">
+        @foreach (var error in _mensajeError)
+        {
+            <li>@error</li>
+        }
+    </ul>
+}
+
+@if(usuarioEnSesion != null){
+    
+    <div class="contenedor-listado">
+
+        <h2 class="titulo-listado">Listado de Usuarios</h2>
+        <div class="pagina-contenedor">
+            <div class="contenedor-tabla">
+                <table class="tabla-usuarios">
+                    <thead>
+                        <tr>
+                            <th class="encabezado-tabla">ID</th>
+                            <th class="encabezado-tabla">NOMBRE</th>
+                            <th class="encabezado-tabla">APELLIDO</th>
+                            <th class="encabezado-tabla">EMAIL</th>
+                            <th class="encabezado-tabla">ACCIONES</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(var usu in _lista)
+                        {
+                            <tr>
+                                <td>@usu.Id</td>
+                                <td>@usu.Nombre</td>
+                                <td>@usu.Apellido</td>
+                                <td>@usu.Email</td>
+                                <td>
+                                    <div class="acciones-contenedor">
+                                        <button class="boton-editar" @onclick="()=>EditarUsuario(usu)">Editar</button>
+                                        <button class="boton-eliminar" @onclick="()=>ConfirmarEliminacion(usu)">Eliminar</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+@code {
+    List<Usuario> _lista = new List<Usuario>();
+    List<string> _mensajeError = new();
+    private Usuario? usuarioEnSesion;
+
+    protected override void OnInitialized()
+    {
+        usuarioEnSesion = servicioSesion.UsuarioActual;
+
+        try
+        {
+            _lista = listarUsuarios.Ejecutar();
+        }
+        catch (CentroEventos.Aplicacion.Excepciones.EntidadNotFoundException ex)
+        {
+            _mensajeError.Add(ex.Message);
+        }
+
+    }
+
+    DialogoConfirmacion dialogo = null!;
+    Usuario? _UsuarioAEliminar = null;
+
+    private void ConfirmarEliminacion(Usuario usu)
+    {
+        _mensajeError = new();
+        _UsuarioAEliminar = usu;
+        dialogo.SetMensaje($"¿Desea eliminar al usuario {usu.Nombre} {usu.Apellido}?");
+        dialogo.Mostrar();
+    }
+
+    private void Eliminar()
+    {
+        if (_UsuarioAEliminar != null)
+        {
+            try
+            {
+                eliminarUsuario.Ejecutar(_UsuarioAEliminar.Id);
+                _lista = listarUsuarios.Ejecutar();
+            }
+            catch (CentroEventos.Aplicacion.Excepciones.FalloAutorizacionException ex)
+            {
+                _mensajeError.Add(ex.Message);
+            }
+            catch (CentroEventos.Aplicacion.Excepciones.OperacionInvalidaException ex)
+            {
+                _mensajeError.Add(ex.Message);
+            }
+            catch (CentroEventos.Aplicacion.Excepciones.EntidadNotFoundException ex)
+            {
+                _mensajeError.Add(ex.Message);
+            }
+            catch (Exception)
+            {
+                _mensajeError.Add("Ocurrió un error al intentar eliminar el usuario.");
+            }
+        }
+    }
+
+
+    private void EditarUsuario(Usuario usu)
+    {
+        _mensajeError = new();
+        if (!servicioSesion.UsuarioActual!.Permisos.Contains(CentroEventos.Aplicacion.Enums.Permiso.UsuarioModificacion) && (usuarioEnSesion!.Id != usu.Id))
+        {
+            _mensajeError.Add("No cuenta con el permiso para modificar el usuario.");
+            return;
+        }
+        navManager.NavigateTo($"/usuario/modificar/{usu.Id}");
+
+    }
+
+}

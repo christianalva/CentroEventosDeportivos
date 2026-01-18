@@ -1,0 +1,133 @@
+@page "/usuario/baja"
+@rendermode InteractiveServer
+@inject UsuarioBajaUseCase eliminarUsuario
+@inject IServicioSesion servicioSesion
+
+<DialogoConfirmacion @ref="dialogo" OnConfirmado="Eliminar"/>
+
+@if (_mensajeError.Any())
+{
+     <ul class="alerta-error">
+        @foreach (var error in _mensajeError)
+        {
+            <li>@error</li>
+        }
+    </ul>
+}
+
+
+@if(permitirBaja){
+    <div class="contenedor-buscar">
+        <h2 class="buscar-titulo">Buscar Usuario a Eliminar</h2>
+        
+        <div class="buscar-form">
+            <label class="buscar-label">Ingrese el ID del usuario a Eliminar</label>
+            <input type="number" class="buscar-input" @bind="IdBusqueda"/>
+        </div>
+        
+        <button class="buscar-boton" @onclick="BuscarUsuario">Buscar Usuario</button>
+    </div>
+
+}
+
+
+@code{
+    List<string> _mensajeError = new();
+    private Usuario? usuarioEnSesion;
+    private Usuario? usuarioSeleccionado; 
+    bool permitirBaja = false; 
+    private int? IdBusqueda;
+
+
+
+    
+    protected override void OnInitialized(){
+        usuarioEnSesion = servicioSesion.UsuarioActual;
+        if (usuarioEnSesion == null)
+        {
+            _mensajeError.Add("Debe iniciar sesión para realizar esta operacion.");
+            permitirBaja = false;
+            return;
+        }
+
+        if(!servicioSesion.UsuarioActual!.Permisos.Contains(CentroEventos.Aplicacion.Enums.Permiso.GestionUsuario)){
+            _mensajeError.Add("No posee los permisos para realizar esta operacion. ");
+        }else{
+            permitirBaja = true;
+        }
+        
+    }
+
+    private void CargarUsuario(int id){
+        _mensajeError = new();
+        try{
+            usuarioSeleccionado = eliminarUsuario.ObtenerParaBaja(id);
+            ConfirmarEliminacion(usuarioSeleccionado);
+            if(usuarioSeleccionado == null){
+                _mensajeError.Add("No se encontró el usuario con ID {id}.");
+            }
+        } catch (CentroEventos.Aplicacion.Excepciones.EntidadNotFoundException ex){
+            _mensajeError.Add(ex.Message);
+        } catch (CentroEventos.Aplicacion.Excepciones.OperacionInvalidaException ex){
+            _mensajeError.Add(ex.Message);
+        } catch (CentroEventos.Aplicacion.Excepciones.FalloAutorizacionException ex){
+            _mensajeError.Add(ex.Message);
+        } catch(Exception ex){
+            _mensajeError.Add(ex.Message);
+        }
+    }
+
+    private void BuscarUsuario(){
+        _mensajeError = new();
+        if(IdBusqueda.HasValue){
+            CargarUsuario(IdBusqueda.Value);
+        } else{
+            _mensajeError.Add("Debe ingresar un ID numerico valido.");
+        }
+    }
+
+    DialogoConfirmacion dialogo = null!;
+    Usuario? _UsuarioAEliminar = null;
+
+    private void ConfirmarEliminacion(Usuario? usu)
+    {
+        _mensajeError = new();
+        if(usu!=null){
+            _UsuarioAEliminar = usu;
+            dialogo.SetMensaje($"¿Desea eliminar al usuario {usu.Nombre} {usu.Apellido}?");
+            dialogo.Mostrar();
+        }
+        
+    }
+
+    private void Eliminar()
+    {
+        if (_UsuarioAEliminar != null)
+        {
+            try
+            {
+                eliminarUsuario.Ejecutar(_UsuarioAEliminar.Id);
+                
+            }
+            catch (CentroEventos.Aplicacion.Excepciones.FalloAutorizacionException ex)
+            {
+                _mensajeError.Add(ex.Message);
+            }
+            catch (CentroEventos.Aplicacion.Excepciones.OperacionInvalidaException ex)
+            {
+                _mensajeError.Add(ex.Message);
+            }
+            catch (CentroEventos.Aplicacion.Excepciones.EntidadNotFoundException ex)
+            {
+                _mensajeError.Add(ex.Message);
+            }
+            catch (Exception)
+            {
+                _mensajeError.Add("Ocurrió un error al intentar eliminar el usuario.");
+            }
+        }
+    }
+
+
+
+}

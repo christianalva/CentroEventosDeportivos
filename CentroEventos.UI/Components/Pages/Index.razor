@@ -1,0 +1,158 @@
+﻿@page "/"
+@using CentroEventos.Aplicacion.Validadores
+@using CentroEventos.Aplicacion.CasosDeUso.Usuarios
+@using CentroEventos.Aplicacion.Entidades
+@rendermode InteractiveServer
+@inject IServicioSesion ServicioSesion
+@inject NavigationManager NavigationManager
+@inject LoginUsuarioUseCase LoginUsuarioUseCase
+@inject UsuarioAltaUseCase UsuarioAltaUseCase
+
+<PageTitle>Inicio</PageTitle>
+
+
+<div class="index">
+
+    <div class="login-layout">
+
+        @if (_errores.Any())
+        {
+             <ul class="alerta-error">
+                @foreach (var error in _errores)
+                {
+                    <li>@error</li>
+                }
+            </ul>
+        }
+
+        @if (!string.IsNullOrEmpty(_mensajeExito))
+        {
+          <div class="alert alerta-exito">@_mensajeExito</div>
+        }
+
+        <div class="contenedor_principal">
+
+            <div class="login-info">
+                <h1>
+                    Sistema de Gestión<br/>
+                    del Centro Deportivo Universitario
+                </h1>
+
+                <div class="contenedor-img">
+                    <button class="flecha izquierda" @onclick="Anterior"><b>&#8249</b></button>
+                    <img src="@_imagenes[_indiceActual]" alt="Imagen de evento" class="imagen-carrusel">
+                    <button class="flecha derecha" @onclick="Siguiente"><b>&#8250</b></button>
+                </div>
+            </div>
+
+
+            @if (!_mostrarRegistro){
+                <div class="login-contenedor">
+                    <div class="contenedor">
+                        <div class="login">
+                            <h2>Bienvenido!</h2>
+                            <h3>Iniciar Sesion</h3>
+                            <input type="email" placeholder="Email" @bind="_usuarioActual.Email"/>
+                            <input type="password" placeholder="Contraseña" @bind="_usuarioActual.Password"/>
+                            <button @onclick="Iniciar">Ingresar</button>
+                            <button class="btn btn-secondary" @onclick=IrARegistro>Registrarse</button>
+                        </div>
+                    </div>
+                </div>
+            } else{
+                <div class="login-contenedor">
+                    <div class="contenedor">
+                        <div class="login">
+                            <h2>Registro</h2>
+                            <input type="text" placeholder="Nombre" @bind="_usuarioActual.Nombre"/>
+                            <input type="text" placeholder="Apellido" @bind="_usuarioActual.Apellido"/>
+                            <input type="email" placeholder="Email" @bind="_usuarioActual.Email"/>
+                            <input type="password" placeholder="Contraseña" @bind="_usuarioActual.Password"/>
+                            <button @onclick="Registrarse">Registrarse</button>
+                            <button class="volverAtras" @onclick=VolverAtras>Volver atrás</button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+@code {
+    private CentroEventos.Aplicacion.Entidades.Usuario _usuarioActual = new();
+    private bool _mostrarRegistro = false;
+    private List<string> _errores = new();
+    private string _mensajeExito = "";
+
+    // Lista de Imagenes para mostrar por pantalla
+    private List<string> _imagenes = new()
+    {
+        "DJI_0056-1024x576.jpg",
+        "DJI_0057-1024x576.jpg",
+        "DJI_0058-1024x576.jpg"
+    };
+    private int _indiceActual = 0;
+    
+    private void Anterior(){
+        _indiceActual = (_indiceActual - 1 + _imagenes.Count) % _imagenes.Count;
+    }
+
+    private void Siguiente(){
+        _indiceActual = (_indiceActual + 1) % _imagenes.Count;
+    }
+
+    private void Iniciar(){
+        _errores.Clear();
+        var resultado = LoginUsuarioUseCase.Ejecutar(_usuarioActual.Email, _usuarioActual.Password);    
+        if(resultado.Errores.Any()){
+            _errores = resultado.Errores;
+            return;
+        }
+
+        ServicioSesion.IniciarSesion(resultado.Usuario!);
+        Console.WriteLine(resultado.Usuario!.Nombre);
+        NavigationManager.NavigateTo("/home");
+    }
+    
+    private void VolverAtras(){
+        _mostrarRegistro = false;
+        _errores.Clear();
+        _mensajeExito = "";
+    }
+
+    private void IrARegistro(){
+        _errores.Clear();
+        _mensajeExito = "";
+        _mostrarRegistro = true;
+    }
+
+    private void Registrarse(){
+        _errores.Clear();
+        _mensajeExito = "";
+        
+        if (string.IsNullOrWhiteSpace(_usuarioActual.Nombre) ||string.IsNullOrWhiteSpace(_usuarioActual.Apellido) ||string.IsNullOrWhiteSpace(_usuarioActual.Email) ||string.IsNullOrWhiteSpace(_usuarioActual.Password))
+        {
+            _errores.Add("Todos los campos son obligatorios.");
+            return;
+        }
+        try
+        {
+            UsuarioAltaUseCase.Ejecutar(_usuarioActual);
+            _mensajeExito = $"Usuario {_usuarioActual.Nombre} Registrado Correctamente.";
+            _usuarioActual = new CentroEventos.Aplicacion.Entidades.Usuario();
+            
+            //ServicioSesion.IniciarSesion(_usuarioActual);
+            //NavigationManager.NavigateTo("/home", true);
+        } catch (CentroEventos.Aplicacion.Excepciones.DuplicadoException ex){
+            _errores.Add(ex.Message);
+        } catch (CentroEventos.Aplicacion.Excepciones.ValidacionException ex){
+            var partes = ex.Message.Split(" • ");
+            _errores.AddRange(partes);
+        }
+        catch (Exception ex)
+        {
+            _errores.Add(ex.Message);
+        }
+    }
+}

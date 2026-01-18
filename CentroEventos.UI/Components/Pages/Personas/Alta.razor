@@ -1,0 +1,108 @@
+@page "/personas/alta"
+@rendermode InteractiveServer
+@inject PersonaAltaUseCase altaPersona
+@inject IServicioSesion servicioSesion
+
+
+
+@if (_mensajeError.Any())
+{
+    <ul class="alerta-error">
+        @foreach (var error in _mensajeError)
+        {
+            <li>@error</li>
+        }
+    </ul>
+}
+@if (!string.IsNullOrEmpty(_mensajeExito))
+{
+  <div class="alert alerta-exito">@_mensajeExito</div>
+}
+
+
+
+
+
+@if(permitirAlta){
+    <div class="pagina-modulo">
+        <div class="contenedor-modulo">
+          <h3 class="titulo-modulo">Alta de Personas</h3>
+
+          <div class="grupo-campo">
+            <label class="etiqueta-campo">DNI</label>
+            <input class="campo-texto" @bind="p.Dni" />
+          </div>
+
+          <div class="grupo-campo">
+            <label class="etiqueta-campo">Nombre</label>
+            <input class="campo-texto" @bind="p.Nombre" />
+          </div>
+
+          <div class="grupo-campo">
+            <label class="etiqueta-campo">Apellido</label>
+            <input class="campo-texto" @bind="p.Apellido" />
+          </div>
+
+          <div class="grupo-campo">
+            <label class="etiqueta-campo">Email</label>
+            <input type="email" class="campo-texto" @bind="p.Email" />
+          </div>
+
+          <div class="grupo-campo">
+            <label class="etiqueta-campo">Telefono</label>
+            <input class="campo-texto" @bind="p.Telefono" />
+          </div>
+
+
+            <button class="boton-principal boton-guardar" @onclick="Agregar">Agregar</button>
+
+        </div>
+    </div>
+
+}
+
+
+
+@code{
+    private List<string> _mensajeError = new();
+    private string _mensajeExito = "";
+
+    private Usuario? usuarioEnSesion;
+    private bool permitirAlta = false;
+    Persona p = new Persona();
+    protected override void OnInitialized()
+    {
+      usuarioEnSesion = servicioSesion.UsuarioActual;
+      if (usuarioEnSesion == null)
+      {
+        _mensajeError.Add("Debes iniciar sesión para dar de alta personas.");
+        return;
+      }
+
+      if(!servicioSesion.UsuarioActual!.Permisos.Contains(CentroEventos.Aplicacion.Enums.Permiso.UsuarioAlta)){
+          _mensajeError.Add("No posee los permisos para realizar esta operacion.");
+      }else{
+          permitirAlta = true;
+      }
+    }
+
+    private void Agregar(){
+      _mensajeError = new();
+      _mensajeExito = "";
+
+      try{
+        altaPersona.Ejecutar(p);
+        _mensajeExito = "Persona agregada correctamente.";
+        p = new Persona();
+      } catch (CentroEventos.Aplicacion.Excepciones.ValidacionException ex){
+        var partes = ex.Message.Split(" • ");
+        _mensajeError.AddRange(partes);
+      } catch (CentroEventos.Aplicacion.Excepciones.EntidadNotFoundException ex){
+        _mensajeError.Add(ex.Message);
+      } catch (CentroEventos.Aplicacion.Excepciones.FalloAutorizacionException ex){
+        _mensajeError.Add(ex.Message);
+      }
+    }
+
+
+}

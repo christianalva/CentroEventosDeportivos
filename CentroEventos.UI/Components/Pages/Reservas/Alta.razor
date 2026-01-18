@@ -1,0 +1,98 @@
+@page "/reservas/alta"
+@rendermode InteractiveServer
+@inject IServicioSesion servicioSesion
+@inject ReservaAltaUseCase altaReserva
+
+@if (_mensajeError.Any())
+{
+    <ul class="alerta-error">
+        @foreach (var error in _mensajeError)
+        {
+            <li>@error</li>
+        }
+    </ul>
+}
+
+@if (!string.IsNullOrEmpty(_mensajeExito))
+{
+  <div class="alert alerta-exito">@_mensajeExito</div>
+}
+
+@if(permitirAlta){
+    <div class="pagina-modulo">
+        <div class="contenedor-modulo">
+            <h2 class="titulo-modulo">Alta de Reservas</h2>
+
+            <div class="grupo-campo">
+              <label class="etiqueta-campo">Id Persona</label>
+              <input type="text" class="campo-texto" @bind="_r.PersonaId" />
+            </div>
+
+            <div class="grupo-campo">
+              <label class="etiqueta-campo">Id Evento Depotivo</label>
+              <input class="campo-texto" @bind="_r.EventoDeportivoId" />
+            </div>
+
+
+            <button class="boton-principal boton-guardar" @onclick="Agregar">Agregar</button>
+
+        </div>
+    </div>
+
+}
+
+@code{
+    private List<string> _mensajeError = new();
+    string _mensajeExito = "";
+
+    private Usuario? usuarioEnSesion;
+    private bool permitirAlta = false;
+
+    private Reserva _r = new Reserva();
+
+    protected override void OnInitialized()
+    {
+        var usuario = servicioSesion.UsuarioActual;
+    
+        if (usuario == null)
+        {
+          _mensajeError.Add("Debe iniciar sesion.");
+          return;
+        }
+
+        if(!servicioSesion.UsuarioActual!.Permisos.Contains(CentroEventos.Aplicacion.Enums.Permiso.ReservaAlta)){
+            _mensajeError.Add("No posee los permisos para realizar esta operacion.");
+        }else{
+            permitirAlta = true;
+        }
+    }
+
+    private void Agregar(){
+        _mensajeError.Clear();
+        _mensajeExito = "";
+        
+        try{
+            altaReserva.Ejecutar(_r);
+            _mensajeExito = "Reserva agregada correctamente.";
+            _r = new Reserva();
+        }
+        catch(CentroEventos.Aplicacion.Excepciones.ValidacionException ex){
+            var partes = ex.Message.Split(" • "); // Hago esto para que las exepciones me queden una abajo de la otra si es que vienen mas de una
+            _mensajeError.AddRange(partes);
+        }
+        catch(CentroEventos.Aplicacion.Excepciones.FalloAutorizacionException ex){
+            var partes = ex.Message.Split(" • ");
+            _mensajeError.AddRange(partes);
+        }
+        catch(CentroEventos.Aplicacion.Excepciones.EntidadNotFoundException ex){
+            var partes = ex.Message.Split(" • ");
+            _mensajeError.AddRange(partes);
+        }
+        catch(Exception ex){
+            var partes = ex.Message.Split(" • ");
+            _mensajeError.AddRange(partes);
+        }
+    }
+
+
+}

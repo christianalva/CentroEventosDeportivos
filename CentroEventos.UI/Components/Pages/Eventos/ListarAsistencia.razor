@@ -1,0 +1,114 @@
+@page "/eventos/listarAsistenciaAEvento"
+@rendermode InteractiveServer
+
+@inject ListarAsistenciaAEventoUseCase AsistenciaUC
+@inject IServicioSesion servicioSesion
+
+
+
+@if (_mensajeError.Any())
+{
+    <ul class="alerta-error">
+        @foreach (var error in _mensajeError)
+        {
+            <li>@error</li>
+        }
+    </ul>
+}
+@if(servicioSesion.EstaLogueado){
+    <div class="contenedor-listado">
+        <h2 class="buscar-titulo">Asistencia a Evento Deportivo</h2>
+        @if(_lista != null){
+            <div class="contenedor-asistencia">
+                <div class="barra-acciones">
+                    <button class="boton-nueva-busqueda" @onclick="Reset">Nueva Búsqueda</button>
+                </div>
+    
+                @if(_lista.Count == 0){
+                    <div class="mensaje-info-asistencia">No se registró asistencia para este evento.</div>
+    
+                } else{
+                    <table class="tabla-usuarios">
+                        <thead>
+                            <tr>
+                                <th class="encabezado-tabla">ID Persona</th>
+                                <th class="encabezado-tabla">Nombre</th>
+                                <th class="encabezado-tabla">Apellido</th>
+                                <th class="encabezado-tabla">Email</th>
+                                <th class="encabezado-tabla">Teléfono</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var p in _lista)
+                            {
+                                <tr>
+                                    <td>@p.Id</td>
+                                    <td>@p.Nombre</td>
+                                    <td>@p.Apellido</td>
+                                    <td>@p.Email</td>
+                                    <td>@p.Telefono</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+    
+        } else{
+            <div class="contenedor-buscar">
+                <div class="buscar-form">
+                    <label class="buscar-label">Ingrese el ID del Evento Deportivo</label>
+                    <input type="number" @bind="IdBusqueda" class="buscar-input"/>
+                </div>
+                <button class="buscar-boton" @onclick="BuscarEvento">Buscar Evento</button>
+            </div>
+        }
+
+    </div>
+}
+
+
+
+
+@code{
+    List<string> _mensajeError = new();
+    List<Persona>? _lista;
+    private int? IdBusqueda;
+
+    protected override void OnInitialized()
+    {
+        if(!servicioSesion.EstaLogueado){
+            _mensajeError.Add("Debe iniciar sesion.");
+        }
+    }
+
+    void Reset()
+    {
+        _lista = null;
+        _mensajeError.Clear();
+        IdBusqueda = null;
+    }
+
+
+    private void BuscarEvento(){
+        _mensajeError.Clear();
+        _lista = null;
+        if (!IdBusqueda.HasValue)
+        {
+            _mensajeError.Add("Ingrese un ID de evento valido.");
+            return;
+        }
+        try
+        {
+            _lista = AsistenciaUC.Ejecutar(IdBusqueda.Value);
+        }
+        catch (CentroEventos.Aplicacion.Excepciones.EntidadNotFoundException ex)
+        {
+            _mensajeError.Add(ex.Message);
+        }
+        catch (CentroEventos.Aplicacion.Excepciones.OperacionInvalidaException ex)
+        {
+            _mensajeError.Add(ex.Message);
+        }
+    }
+}

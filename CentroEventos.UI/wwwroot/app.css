@@ -1,0 +1,443 @@
+/*Estilo para Home*/
+.dashboard {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    align-items: stretch;
+    margin-top: 40px;
+    flex-wrap: wrap;
+}
+
+.card {
+    background-color: #1e1e1e;
+    color: white;
+    border-radius: 12px;
+    padding: 20px;
+    width: 220px;
+    min-height: 120px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.35);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.5);
+}
+
+.card h3 {
+    margin: 0;
+    margin-bottom: 12px;
+    font-size: 1rem;
+    text-align: center;
+    color: #cccccc;
+}
+
+.card p {
+    margin: 0;
+    font-size: 2.4rem;
+    font-weight: bold;
+    color: rgb(173, 37, 37);
+}
+
+
+
+/* Estilo para Listar Asistencia*/
+.contenedor-asistencia {
+  margin: 1.5rem 0;
+}
+
+/* Alinea el botón de nueva búsqueda a la derecha */
+.barra-acciones {
+  text-align: left;
+  margin-bottom: 1rem;
+}
+
+.boton-nueva-busqueda {
+  background-color: #6d0000;   /* gris secundario */
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.boton-nueva-busqueda:hover {
+  background-color: #c50101;
+}
+
+.mensaje-info-asistencia {
+  background-color: #cececed8;
+  color: rgb(0, 0, 0);
+  border: 1px solid #000000;
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+  margin-top: 1rem;
+}
+
+
+/* Estilo para Modificar Permisos*/
+.contenedor-permisos {
+    background-color: rgb(224, 224, 224);
+    padding: 1.5rem;
+    border-radius: 8px;
+    max-width: 600px;
+    margin: 20% auto;
+}
+
+.titulo-permisos {
+  color: rgb(121, 1, 1);
+  margin-bottom: 1rem;
+  font-weight: normal;
+}
+
+.lista-permisos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.elemento-permiso {
+  background-color: white;
+  border: 1px solid lightgray;
+  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  width: calc(50% - 1rem);
+}
+
+.casilla-permiso {
+  margin-right: 0.5rem;
+  accent-color: rgb(196, 3, 3);
+}
+
+.etiqueta-permiso {
+  color: rgb(104, 104, 104);
+  font-size: 0.95rem;
+}
+
+.contenedor-boton {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+
+.boton-guardar {
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+
+
+/* Estilo para Modificar */
+
+.pagina-modulo {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.contenedor-modulo {
+  background-color: #ffffff;
+  border: 1px solid #cedeeb;
+  border-radius: 8px;
+  padding: 2rem;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.titulo-modulo {
+  text-align: center;
+  color: #3a506b;
+  margin-bottom: 1.5rem;
+  font-size: 1.75rem;
+}
+
+.grupo-campo {
+  margin-bottom: 1.25rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.etiqueta-campo {
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #2e3d49;
+}
+
+.campo-texto {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #cedeeb;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.campo-texto:focus {
+  outline: none;
+  border-color: #ff0000;
+  box-shadow: 0 0 4px #490b0b;
+}
+
+.boton-principal {
+  display: block;
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.boton-guardar {
+  background-color: #940808;
+  color: #ffffff;
+}
+
+.boton-guardar:hover {
+  background-color: #cf0505;
+  transform: translateY(-1px);
+}
+
+
+
+/* Estilo para Listar */
+.contenedor-listado{
+  background-color: #e0e0e0;
+  margin: 4rem;
+  border-radius: 20px;
+  padding:20px ;
+}
+
+.titulo-listado {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #000000;
+}
+
+.pagina-contenedor {
+  display: flex;
+  justify-content: center;
+}
+
+.contenedor-tabla {
+  width: 100%;
+  max-width: 1000px;
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+}
+
+.tabla-usuarios {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 0.75rem;
+}
+
+.encabezado-tabla {
+  background-color: #750a0a;;
+  color: #ffffff;
+  padding: 0.75rem 1rem;
+  text-transform: uppercase;
+  font-size: 0.875rem;
+  letter-spacing: 0.05em;
+}
+
+.tabla-usuarios th, .tabla-usuarios td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+
+.tabla-usuarios tbody tr {
+  background-color: #ffffff;
+  transition: background-color 0.2s ease;
+}
+
+.tabla-usuarios tbody tr:hover {
+  background-color: #e6e6e6;
+}
+
+.acciones-contenedor {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.boton-editar,
+.boton-eliminar {
+  border: none;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.boton-editar {
+  background-color: #48a567;
+  color: #ffffff;
+}
+
+.boton-editar:hover {
+  background-color: #1f6102;
+  transform: translateY(-1px);
+}
+
+.boton-eliminar {
+  background-color: #ef476f;
+  color: #ffffff;
+}
+
+.boton-eliminar:hover {
+  background-color: #d64566;
+  transform: translateY(-1px);
+}
+
+
+/* Estilo para Bucar Usuarios */
+
+.contenedor-buscar {
+  max-width: 480px;
+  margin: 150px auto;
+  background: #ffffff;
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+}
+
+.buscar-titulo {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #2c3e50;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.buscar-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.buscar-label {
+  font-size: 1rem;
+  color: #555;
+}
+
+.buscar-input {
+  padding: 10px 12px;
+  font-size: 1rem;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s;
+}
+
+.buscar-input:focus {
+  outline: none;
+  border-color: #5b9df9;
+  box-shadow: 0 0 0 2px rgba(91, 157, 249, 0.2);
+}
+
+.buscar-boton {
+  width: 100%;
+  padding: 12px 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #fff;
+  background-color: #940808;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.buscar-boton:hover {
+  background-color: rgb(221, 6, 6);
+}
+
+/* =================================== Estilo para lista de errores ==================================== */
+.alerta-error {
+    position: absolute;
+    top: 20px;
+    left: 60%;
+    transform: translateX(-50%);
+    background-color: #fff1f0;
+    border: 1px solid #ffa39e;
+    color: #cf1322;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 9999;
+    max-width: 90%;
+    width: fit-content;
+    font-weight: 500;
+
+}
+
+.alerta-error li {
+    margin-bottom: 0.5rem;
+    padding-left: 1.2em;
+    position: relative;
+
+}
+
+.alerta-error li::before {
+    position: absolute;
+    left: 0;
+    color: #cf1322;
+}
+
+/* ============================ Estilo para mensaje de éxito =================== */
+.alerta-exito {
+    position: absolute;
+    top: 20px;
+    left: 60%;
+    transform: translateX(-50%);
+    background-color: #f6ffed;
+    border: 1px solid #b7eb8f;
+    color: #389e0d;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 9999;
+    max-width: 90%;
+    width: fit-content;
+    font-weight: 500;
+    opacity: 1;
+    animation: desvanecer 4s ease-in forwards;
+}
+
+/* para que desaparezca despues de 3 segundos*/
+@keyframes desvanecer {
+  0%   { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { opacity: 0; display: none; }
+}
+
+
+
+
+@media (max-width: 642px) {
+    .alerta-error {
+      left: 50%;
+    }
+
+    .alerta-exito{
+      left: 50%;
+    }
+
+}

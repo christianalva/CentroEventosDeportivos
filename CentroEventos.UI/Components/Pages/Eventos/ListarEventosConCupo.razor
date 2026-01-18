@@ -1,0 +1,76 @@
+@page "/eventos/eventosConCupo"
+@rendermode InteractiveServer
+
+@inject ListarEventosConCupoDisponibleUseCase eventosConCupoUC
+
+
+@if (_mensajeError.Any())
+{
+     <ul class="alerta-error">
+        @foreach (var error in _mensajeError)
+        {
+            <li>@error</li>
+        }
+    </ul>
+}
+
+@if(_lista != null){
+    <div class="contenedor-listado">
+        <h2 class="titulo-listado">Eventos con Cupo Disponible</h2>
+        <div class="pagina-contenedor">
+            <div class="contenedor-tabla">
+                <table class="tabla-usuarios">
+                    <thead>
+                    <tr>
+                        <th class="encabezado-tabla">ID</th>
+                        <th class="encabezado-tabla">NOMBRE</th>
+                        <th class="encabezado-tabla">DESCRIPCION</th>
+                        <th class="encabezado-tabla">FECHA Y HORA</th>
+                        <th class="encabezado-tabla">DURACION (Hs)</th>
+                        <th class="encabezado-tabla">CUPO MAXIMO</th>
+                        <th class="encabezado-tabla">ID RESPONSABLE</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var eve in _lista)
+                    {
+                        <tr>
+                            <td>@eve.Id</td>
+                            <td>@eve.Nombre</td>
+                            <td>@eve.Descripcion</td>
+                            <td>@eve.FechaHoraInicio</td>
+                            <td>@eve.DuracionHoras</td>
+                            <td>@eve.CupoMaximo</td>
+                            <td>@eve.ResponsableId</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+
+@code{
+    List<string> _mensajeError = new();
+    List<EventoDeportivo>? _lista;
+    private int? IdBusqueda;
+
+    protected override void OnInitialized(){
+        try
+        {
+            _lista = eventosConCupoUC.Ejecutar();
+        }
+        catch (CentroEventos.Aplicacion.Excepciones.EntidadNotFoundException ex)
+        {
+            _mensajeError.Add(ex.Message); 
+        }
+        catch (CentroEventos.Aplicacion.Excepciones.OperacionInvalidaException ex)
+        {
+            _mensajeError.Add(ex.Message); 
+        }
+
+    }
+
+
+}

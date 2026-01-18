@@ -1,0 +1,136 @@
+@page "/personas/listar"
+@rendermode InteractiveServer
+@inject ListarPersonasUseCase listarPersonas
+@inject PersonaBajaUseCase eliminarPersonas
+@inject ModificarPersonaUseCase modificarPersona
+@inject NavigationManager navManager
+@inject IServicioSesion servicioSesion
+
+<DialogoConfirmacion @ref="dialogo" OnConfirmado="Eliminar"/>
+
+@if (_mensajeError.Any())
+{
+     <ul class="alerta-error">
+        @foreach (var error in _mensajeError)
+        {
+            <li>@error</li>
+        }
+    </ul>
+}
+
+@if(usuarioEnSesion != null){
+    <div class="contenedor-listado">
+        <h1 class="titulo-listado">Listado de Personas</h1>
+        <div class="pagina-contenedor">
+            <div class="contenedor-tabla">
+                <table class="tabla-usuarios">
+                    <thead>
+                        <tr>
+                            <th class="encabezado-tabla">ID</th>
+                            <th class="encabezado-tabla">DNI</th>
+                            <th class="encabezado-tabla">NOMBRE</th>
+                            <th class="encabezado-tabla">APELLIDO</th>
+                            <th class="encabezado-tabla">EMAIL</th>
+                            <th class="encabezado-tabla">TELEFONO</th>
+                            <th class="encabezado-tabla">ACCIONES</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(var per in _lista)
+                        {
+                            <tr>
+                               <td>@per.Id</td>
+                               <td>@per.Dni</td>
+                               <td>@per.Nombre</td>
+                               <td>@per.Apellido</td
+                               <td>@per.Email</td>
+                               <td>@per.Telefono</td>
+                               <td>
+                                    <div class="acciones-contenedor">
+                                        <button class="boton-editar" @onclick="()=>EditarUsuario(per)">Editar</button>
+                                        <button class="boton-eliminar" @onclick="()=>ConfirmarEliminacion(per)">Eliminar</button>
+                                    </div>
+                               </td>
+                           </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+
+
+@code {
+    List<Persona> _lista = new List<Persona>();
+    List<string> _mensajeError = new();
+    private Usuario? usuarioEnSesion;
+    protected override void OnInitialized()
+    {
+        // Llamo al caso de uso para listar en pantalla a los usuarios, siempre que posea los permisos
+        _lista = listarPersonas.Ejecutar();
+        // Obtengo el usuario en la sesion para realizar las validaciones correspondientes para realizar las operaciones 
+        usuarioEnSesion = servicioSesion.UsuarioActual;
+        if(usuarioEnSesion == null){
+            _mensajeError.Add("Debe iniciar sesion.");
+        }
+    }
+
+    DialogoConfirmacion dialogo = null!;
+    Persona? _personaAEliminar = null;
+
+    private void ConfirmarEliminacion(Persona per)
+    {
+        _mensajeError = new();
+        _personaAEliminar = per;
+        dialogo.SetMensaje($"¿Desea eliminar a la Persona {per.Nombre} {per.Apellido}?");
+        dialogo.Mostrar();
+    }
+
+    private void Eliminar()
+    {
+        if (_personaAEliminar != null)
+        {
+            try
+            {
+                eliminarPersonas.Ejecutar(_personaAEliminar.Id);
+                _lista = listarPersonas.Ejecutar();
+            }
+            catch (CentroEventos.Aplicacion.Excepciones.FalloAutorizacionException ex)
+            {
+                _mensajeError.Add(ex.Message);
+            }
+            catch (CentroEventos.Aplicacion.Excepciones.OperacionInvalidaException ex)
+            {
+                _mensajeError.Add(ex.Message);
+            }
+            catch (CentroEventos.Aplicacion.Excepciones.EntidadNotFoundException ex)
+            {
+                _mensajeError.Add(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _mensajeError.Add(ex.Message);
+            }
+        }
+    }
+
+
+    private void EditarUsuario(Persona per)
+    {
+        _mensajeError = new();
+
+        // Verificamos si el usuario actual tiene el permiso para modificar
+        // UsuarioModificacion es el permiso que tiene que tener un usuario para poder modificar a otros 
+        if (!servicioSesion.UsuarioActual!.Permisos.Contains(CentroEventos.Aplicacion.Enums.Permiso.UsuarioModificacion))
+        {
+            _mensajeError.Add("No cuenta con el permiso para modificar la Persona.");
+            return;
+        }
+
+        // Si tiene permiso lo redirijo a la pagina de modificacion 
+        navManager.NavigateTo($"/personas/modificar/{per.Id}");
+
+    }
+
+}

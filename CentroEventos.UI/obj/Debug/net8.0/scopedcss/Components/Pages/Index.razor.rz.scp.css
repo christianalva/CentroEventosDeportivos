@@ -1,0 +1,217 @@
+.login-layout[b-8onls4bymz]{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #000000;
+    z-index: 1;
+    display: flex;
+    align-items: center; 
+    justify-content: center;
+}
+
+.contenedor_principal[b-8onls4bymz]{
+    display: flex;
+    width: 60%;
+    height: auto;
+    justify-content: space-between;
+    padding: 50px 20px;
+    background-color: #240505;
+    box-shadow: 2px 5px 8px 10px rgba(255, 255, 255, 0.1);
+    border: 2px solid #8b8b8b;
+    border-radius: 30px
+}
+
+.login-layout .login-info[b-8onls4bymz]{
+    width: 50%;
+    height: 60%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #f8f8f8;
+
+}
+
+.login-contenedor[b-8onls4bymz]{
+    display: flex;
+    padding: 60px 20px 60px 20px;
+    border: 1px solid #000000;
+    border-radius: 20px;
+    background: #bebebe;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.contenedor[b-8onls4bymz]{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Imagenes */
+.login-layout .contenedor-img[b-8onls4bymz] {
+    position: relative;
+    width: 80%;
+    max-width: 550px;
+    aspect-ratio: 1/1;
+    margin: 20px auto 0;
+    overflow: hidden;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.login-layout .contenedor-img .imagen-carrusel[b-8onls4bymz] {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.login-layout .contenedor-img .flecha[b-8onls4bymz] {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3.5rem;
+    background: rgba(0,0,0,0.4);
+    color: #fff;
+    cursor: pointer;
+    user-select: none;
+    opacity: .4;
+    transition-duration: .6s;
+}
+
+.login-layout .contenedor-img .izquierda b[b-8onls4bymz]{
+    display: block;
+    margin-top: -13px;
+    margin-left: -5px;
+}
+
+.login-layout .contenedor-img .derecha b[b-8onls4bymz]{
+    display: block;
+    margin-top: -13px;
+    margin-right: -5px;
+}
+
+.login-layout .contenedor-img .flecha.izquierda[b-8onls4bymz] {
+    left: 4px;
+}
+
+.login-layout .contenedor-img .flecha.derecha[b-8onls4bymz] {
+    right: 4px;
+}
+
+.login-layout .contenedor-img .flecha:hover[b-8onls4bymz] {
+    opacity: 1;
+    background: rgba(0,0,0,0.6);
+}
+
+
+
+
+
+.login[b-8onls4bymz]{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 300px;
+}
+
+.login input[b-8onls4bymz] {
+    padding: 10px;
+    font-size: 16px;
+    border: 0.1px solid #bbb;
+    border-radius: 5px;
+}
+
+.login button[b-8onls4bymz]{
+    padding: 10px;
+    background-color: #000000;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 1s;
+}
+
+.login button:hover[b-8onls4bymz]{
+    background-color: #313131;
+    transform: scale(1.06);
+}
+
+.login .volverAtras[b-8onls4bymz]{
+    background-color: #380101;
+    color: #ffffff;
+}
+
+.login .volverAtras:hover[b-8onls4bymz]{
+    background: #750101;
+}
+
+
+
+/* Para pantallas mas chicas*/
+@media (max-width: 1240px) {
+    .contenedor_principal[b-8onls4bymz] {
+        flex-direction: column;       
+        align-items: center;          
+        padding: 20px;                
+    }
+
+    .contenedor-img[b-8onls4bymz]{
+        display: none;
+    }
+
+    .login-info h1[b-8onls4bymz]{
+        font-size: 30px;
+    }
+
+    .login-info[b-8onls4bymz], .login-contenedor[b-8onls4bymz] {
+        width: auto;        
+        max-width: 550px;    
+        margin-bottom: 30px;
+    }
+
+    .login-contenedor[b-8onls4bymz] {
+        display: flex;            
+        align-items: center;     
+        justify-content: center;  
+    }
+
+    .login[b-8onls4bymz] {
+        width: auto;         
+        min-width: 300px;    
+    }
+
+    .login input[b-8onls4bymz], .login button[b-8onls4bymz] {
+        width: auto;         
+        min-width: 250px;    
+        flex-shrink: 0;      
+    }
+
+    .login[b-8onls4bymz] {
+        display: flex;
+        flex-direction: column;
+        align-items: center; 
+        text-align: center; 
+    }
+
+    
+}
+
+@media (max-width: 600px) {
+    .contenedor_principal[b-8onls4bymz]{
+        width: 95%;
+    }
+
+    .login-contenedor[b-8onls4bymz]{
+        padding: 30px 2px 30px 2px;
+    }
+}

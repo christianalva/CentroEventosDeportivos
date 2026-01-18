@@ -1,0 +1,53 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\chris\\Documents\\FACULTAD\\2_Segundo Año\\Primer Semestre\\Seminario\\.Net\\Teorias y practicas 2025\\Trabajo Final\\CentroEventos\\CentroEventos.UI\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\CentroEventos.UI.bundle.scp.css",
+      "PackagePath": "staticwebassets\\CentroEventos.UI.bundle.scp.css"
+    },
+    {
+      "Id": "C:\\Users\\chris\\Documents\\FACULTAD\\2_Segundo Año\\Primer Semestre\\Seminario\\.Net\\Teorias y practicas 2025\\Trabajo Final\\CentroEventos\\CentroEventos.UI\\wwwroot\\DJI_0056-1024x576.jpg",
+      "PackagePath": "staticwebassets\\DJI_0056-1024x576.jpg"
+    },
+    {
+      "Id": "C:\\Users\\chris\\Documents\\FACULTAD\\2_Segundo Año\\Primer Semestre\\Seminario\\.Net\\Teorias y practicas 2025\\Trabajo Final\\CentroEventos\\CentroEventos.UI\\wwwroot\\DJI_0057-1024x576.jpg",
+      "PackagePath": "staticwebassets\\DJI_0057-1024x576.jpg"
+    },
+    {
+      "Id": "C:\\Users\\chris\\Documents\\FACULTAD\\2_Segundo Año\\Primer Semestre\\Seminario\\.Net\\Teorias y practicas 2025\\Trabajo Final\\CentroEventos\\CentroEventos.UI\\wwwroot\\DJI_0058-1024x576.jpg",
+      "PackagePath": "staticwebassets\\DJI_0058-1024x576.jpg"
+    },
+    {
+      "Id": "C:\\Users\\chris\\Documents\\FACULTAD\\2_Segundo Año\\Primer Semestre\\Seminario\\.Net\\Teorias y practicas 2025\\Trabajo Final\\CentroEventos\\CentroEventos.UI\\wwwroot\\app.css",
+      "PackagePath": "staticwebassets\\app.css"
+    },
+    {
+      "Id": "C:\\Users\\chris\\Documents\\FACULTAD\\2_Segundo Año\\Primer Semestre\\Seminario\\.Net\\Teorias y practicas 2025\\Trabajo Final\\CentroEventos\\CentroEventos.UI\\wwwroot\\bootstrap\\bootstrap.min.css",
+      "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css"
+    },
+    {
+      "Id": "C:\\Users\\chris\\Documents\\FACULTAD\\2_Segundo Año\\Primer Semestre\\Seminario\\.Net\\Teorias y practicas 2025\\Trabajo Final\\CentroEventos\\CentroEventos.UI\\wwwroot\\bootstrap\\bootstrap.min.css.map",
+      "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css.map"
+    },
+    {
+      "Id": "C:\\Users\\chris\\Documents\\FACULTAD\\2_Segundo Año\\Primer Semestre\\Seminario\\.Net\\Teorias y practicas 2025\\Trabajo Final\\CentroEventos\\CentroEventos.UI\\wwwroot\\favicon.png",
+      "PackagePath": "staticwebassets\\favicon.png"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.CentroEventos.UI.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.CentroEventos.UI.props",
+      "PackagePath": "build\\CentroEventos.UI.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.CentroEventos.UI.props",
+      "PackagePath": "buildMultiTargeting\\CentroEventos.UI.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.CentroEventos.UI.props",
+      "PackagePath": "buildTransitive\\CentroEventos.UI.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

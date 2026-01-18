@@ -1,0 +1,110 @@
+﻿@rendermode InteractiveServer 
+@inject NavigationManager NavigationManager
+@inject IServicioSesion ServicioSesion
+
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/home">Centro Deportivo Universitario</a>
+    </div>
+</div>
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+<div class="nav-scrollable">
+
+    <nav class="flex-column">
+        <button class="menu-btn" @onclick='() => MostrarMenu("usuario")'><i class="bi bi-person-circle me-2"></i> Menu Usuario</button>
+        <div class="nav-item px-3">
+            @if(activarSubMenu == "usuario"){
+                <NavLink class="nav-link" href="/usuario/modificar">
+                    <span class="" aria-hidden="true"></span> Modificar Usuario
+                </NavLink>
+                <NavLink class="nav-link" href="/usuario/listar">
+                    <span class="" aria-hidden="true"></span> Lista de Usuarios
+                </NavLink>
+                <NavLink class="nav-link" href="/usuario/baja">
+                    <span class="" aria-hidden="true"></span> Eliminar Usuario
+                </NavLink>
+                <NavLink class="nav-link" href="/usuario/modificarpermisos">
+                    <span class="" aria-hidden="true"></span> Modificar Permisos
+                </NavLink>
+            }
+        </div>
+        <button class="menu-btn" @onclick='() => MostrarMenu("persona")'><i class="bi bi-people-fill me-2"></i> Menu Personas</button>
+        <div class="nav-item px-3">
+            @if(activarSubMenu == "persona"){
+                <NavLink class="nav-link" href="/personas/alta">
+                    <span class="" ></span> Agregar Persona
+                </NavLink>
+                <NavLink class="nav-link" href="/personas/baja">
+                    <span class="" ></span> Eliminar Persona
+                </NavLink>
+                <NavLink class="nav-link" href="/personas/listar">
+                    <span class=""></span> Listar Personas
+                </NavLink>
+                <NavLink class="nav-link" href="/personas/modificar">
+                    <span class=""></span> Modificar Persona
+                </NavLink>
+            }
+        </div>
+
+        <button class="menu-btn" @onclick='() => MostrarMenu("evento")'><i class="bi bi-calendar-event-fill me-2"></i> Menu Evento</button>
+        <div class="nav-item px-3">
+            @if(activarSubMenu == "evento"){
+                <NavLink class="nav-link" href="/eventos/alta">
+                    <span class=""></span> Agregar Evento
+                </NavLink>
+                <NavLink class="nav-link" href="/eventos/baja">
+                    <span class="" ></span> Eliminar Evento
+                </NavLink>
+                <NavLink class="nav-link" href="/eventos/listar">
+                    <span class="" ></span> Listar Eventos
+                </NavLink>
+                <NavLink class="nav-link" href="/eventos/modificar">
+                    <span class=""></span> Modificar Evento
+                </NavLink>
+                <NavLink class="nav-link" href="/eventos/listarAsistenciaAEvento">
+                    <span class=""></span> ListarasistenciaaEvento
+                </NavLink>
+                <NavLink class="nav-link" href="/eventos/eventosConCupo">
+                    <span class=""></span> Eventosconcupodisponible
+                </NavLink>
+                
+            }
+        </div>
+        
+
+        <button class="menu-btn" @onclick='() => MostrarMenu("reserva")'><i class="bi bi-journal-check me-2"></i> Menu Reservas</button>
+        <div class="nav-item px-3">
+            @if(activarSubMenu == "reserva"){
+                <NavLink class="nav-link" href="/reservas/alta">
+                    <span class=""></span> Agregar Reserva
+                </NavLink>
+                <NavLink class="nav-link" href="/reservas/baja">
+                    <span class=""></span> Eliminar Reserva
+                </NavLink>
+                <NavLink class="nav-link" href="/reservas/listar">
+                    <span class=""></span> Listar Reservas
+                </NavLink>
+                <NavLink class="nav-link" href="/reservas/modificar">
+                    <span class=""></span> Modificar Reserva
+                </NavLink>
+            }
+        </div>
+    </nav>
+    <button class="btn btn-danger btn-sm cerrarSesion" @onclick="CerrarSesion">Cerrar sesión</button>
+</div>
+
+
+@code {
+    private string? activarSubMenu;
+    
+    void MostrarMenu(string clave)
+    {
+        activarSubMenu = activarSubMenu == clave ? null : clave;
+    }
+
+    void CerrarSesion()
+    {
+        ServicioSesion.CerrarSesion();
+        NavigationManager.NavigateTo("/", true);
+    }
+}

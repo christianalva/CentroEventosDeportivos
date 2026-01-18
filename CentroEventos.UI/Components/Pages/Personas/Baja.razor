@@ -1,0 +1,121 @@
+@page "/personas/baja"
+@rendermode InteractiveServer
+@inject PersonaBajaUseCase bajaPersona
+@inject IServicioSesion servicioSesion
+
+<DialogoConfirmacion @ref="dialogo" OnConfirmado="Eliminar"/>
+
+@if (_mensajeError.Any())
+{
+    <ul class="alerta-error">
+        @foreach (var error in _mensajeError)
+        {
+            <li>@error</li>
+        }
+    </ul>
+}
+@if (!string.IsNullOrEmpty(_mensajeExito))
+{
+  <div class="alert alerta-exito">@_mensajeExito</div>
+}
+
+
+
+@if(poseePermiso){
+    <div class="contenedor-buscar">
+        <h2 class="buscar-titulo">Buscar Persona a Eliminar</h2>
+        <div class="buscar-form">
+            <label class="buscar-label">Ingrese el ID de la Persona a Eliminar</label>
+            <input type="number" class="buscar-input" @bind="IdBusqueda" />
+        </div>
+        <button class="buscar-boton" @onclick="BuscarPersona">Buscar Usuario</button>
+    </div>
+}
+
+
+@code {
+    private int? IdBusqueda;
+    private Persona? personaParaBaja;
+    private bool poseePermiso;
+    private List<string> _mensajeError = new();
+    private string _mensajeExito = string.Empty;
+    private DialogoConfirmacion dialogo = null!;
+
+    protected override void OnInitialized()
+    {      
+        var usuario = servicioSesion.UsuarioActual;
+  
+        if (usuario == null)
+        {
+          _mensajeError.Add("Debe iniciar sesión.");
+          return;
+        }
+
+        poseePermiso = servicioSesion.UsuarioActual!.Permisos.Contains(CentroEventos.Aplicacion.Enums.Permiso.UsuarioBaja);
+
+        if (!poseePermiso)
+          _mensajeError.Add("No posee permiso para eliminar personas.");
+    }
+
+    private void BuscarPersona()
+    {
+        _mensajeError = new();
+        _mensajeExito = "";
+        personaParaBaja = null;
+
+        if (!IdBusqueda.HasValue)
+        {
+            _mensajeError.Add("Debe ingresar un ID numérico válido.");
+            return;
+        }
+
+        try
+        {
+            // Valida existencia y los permisos
+            personaParaBaja = bajaPersona.ObtenerParaBaja(IdBusqueda.Value);
+
+            // Si la persona existe muestro para que confirme si se desea eliminar 
+            dialogo.SetMensaje($"¿Desea eliminar a {personaParaBaja.Nombre} {personaParaBaja.Apellido}?");
+            dialogo.Mostrar();
+        }
+        catch (CentroEventos.Aplicacion.Excepciones.EntidadNotFoundException)
+        {
+            _mensajeError.Add($"No existe persona con ID {IdBusqueda}.");
+        }
+        catch (CentroEventos.Aplicacion.Excepciones.FalloAutorizacionException ex)
+        {
+            var partes = ex.Message.Split(" • ");
+            _mensajeError.AddRange(partes);
+        }
+    }
+
+    private void Eliminar()
+    {
+        _mensajeError = new();
+        _mensajeExito = "";
+        if (!IdBusqueda.HasValue)
+        {
+          _mensajeError.Add("ID inválido.");
+          return;
+        }
+        try
+        {
+            bajaPersona.Ejecutar(IdBusqueda.Value);
+            _mensajeExito = $"Persona con ID {IdBusqueda} eliminada correctamente.";
+        }
+        catch (CentroEventos.Aplicacion.Excepciones.OperacionInvalidaException ex)
+        {
+            _mensajeError.Add(ex.Message);
+        }
+        catch (CentroEventos.Aplicacion.Excepciones.EntidadNotFoundException ex)
+        {
+            var partes = ex.Message.Split(" • ");
+            _mensajeError.AddRange(partes);
+        }
+        catch (CentroEventos.Aplicacion.Excepciones.FalloAutorizacionException ex)
+        {
+            _mensajeError.Add(ex.Message);
+        }
+        
+    }
+}

@@ -1,0 +1,127 @@
+is_global = true
+build_property.TargetFramework = net8.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = CentroEventos.UI
+build_property.RootNamespace = CentroEventos.UI
+build_property.ProjectDir = C:\Users\chris\Documents\FACULTAD\2_Segundo Año\Primer Semestre\Seminario\.Net\Teorias y practicas 2025\Trabajo Final\CentroEventos\CentroEventos.UI\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.RazorLangVersion = 8.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = C:\Users\chris\Documents\FACULTAD\2_Segundo Año\Primer Semestre\Seminario\.Net\Teorias y practicas 2025\Trabajo Final\CentroEventos\CentroEventos.UI
+build_property._RazorSourceGeneratorDebug = 
+
+[C:/Users/chris/Documents/FACULTAD/2_Segundo Año/Primer Semestre/Seminario/.Net/Teorias y practicas 2025/Trabajo Final/CentroEventos/CentroEventos.UI/Components/App.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBcHAucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/chris/Documents/FACULTAD/2_Segundo Año/Primer Semestre/Seminario/.Net/Teorias y practicas 2025/Trabajo Final/CentroEventos/CentroEventos.UI/Components/Pages/Error.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFcnJvci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/chris/Documents/FACULTAD/2_Segundo Año/Primer Semestre/Seminario/.Net/Teorias y practicas 2025/Trabajo Final/CentroEventos/CentroEventos.UI/Components/Pages/Eventos/Alta.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFdmVudG9zXEFsdGEucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/chris/Documents/FACULTAD/2_Segundo Año/Primer Semestre/Seminario/.Net/Teorias y practicas 2025/Trabajo Final/CentroEventos/CentroEventos.UI/Components/Pages/Eventos/Baja.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFdmVudG9zXEJhamEucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/chris/Documents/FACULTAD/2_Segundo Año/Primer Semestre/Seminario/.Net/Teorias y practicas 2025/Trabajo Final/CentroEventos/CentroEventos.UI/Components/Pages/Eventos/Listar.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFdmVudG9zXExpc3Rhci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/chris/Documents/FACULTAD/2_Segundo Año/Primer Semestre/Seminario/.Net/Teorias y practicas 2025/Trabajo Final/CentroEventos/CentroEventos.UI/Components/Pages/Eventos/ListarAsistencia.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFdmVudG9zXExpc3RhckFzaXN0ZW5jaWEucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/chris/Documents/FACULTAD/2_Segundo Año/Primer Semestre/Seminario/.Net/Teorias y practicas 2025/Trabajo Final/CentroEventos/CentroEventos.UI/Components/Pages/Eventos/ListarEventosConCupo.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFdmVudG9zXExpc3RhckV2ZW50b3NDb25DdXBvLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/chris/Documents/FACULTAD/2_Segundo Año/Primer Semestre/Seminario/.Net/Teorias y practicas 2025/Trabajo Final/CentroEventos/CentroEventos.UI/Components/Pages/Eventos/Modificar.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFdmVudG9zXE1vZGlmaWNhci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/chris/Documents/FACULTAD/2_Segundo Año/Primer Semestre/Seminario/.Net/Teorias y practicas 2025/Trabajo Final/CentroEventos/CentroEventos.UI/Components/Pages/Home.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xIb21lLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/chris/Documents/FACULTAD/2_Segundo Año/Primer Semestre/Seminario/.Net/Teorias y practicas 2025/Trabajo Final/CentroEventos/CentroEventos.UI/Components/Pages/Personas/Alta.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xQZXJzb25hc1xBbHRhLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/chris/Documents/FACULTAD/2_Segundo Año/Primer Semestre/Seminario/.Net/Teorias y practicas 2025/Trabajo Final/CentroEventos/CentroEventos.UI/Components/Pages/Personas/Baja.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xQZXJzb25hc1xCYWphLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/chris/Documents/FACULTAD/2_Segundo Año/Primer Semestre/Seminario/.Net/Teorias y practicas 2025/Trabajo Final/CentroEventos/CentroEventos.UI/Components/Pages/Personas/Listar.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xQZXJzb25hc1xMaXN0YXIucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/chris/Documents/FACULTAD/2_Segundo Año/Primer Semestre/Seminario/.Net/Teorias y practicas 2025/Trabajo Final/CentroEventos/CentroEventos.UI/Components/Pages/Personas/Modificar.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xQZXJzb25hc1xNb2RpZmljYXIucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/chris/Documents/FACULTAD/2_Segundo Año/Primer Semestre/Seminario/.Net/Teorias y practicas 2025/Trabajo Final/CentroEventos/CentroEventos.UI/Components/Pages/Reservas/Alta.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xSZXNlcnZhc1xBbHRhLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/chris/Documents/FACULTAD/2_Segundo Año/Primer Semestre/Seminario/.Net/Teorias y practicas 2025/Trabajo Final/CentroEventos/CentroEventos.UI/Components/Pages/Reservas/Baja.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xSZXNlcnZhc1xCYWphLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/chris/Documents/FACULTAD/2_Segundo Año/Primer Semestre/Seminario/.Net/Teorias y practicas 2025/Trabajo Final/CentroEventos/CentroEventos.UI/Components/Pages/Reservas/Lista.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xSZXNlcnZhc1xMaXN0YS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/chris/Documents/FACULTAD/2_Segundo Año/Primer Semestre/Seminario/.Net/Teorias y practicas 2025/Trabajo Final/CentroEventos/CentroEventos.UI/Components/Pages/Reservas/Modificar.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xSZXNlcnZhc1xNb2RpZmljYXIucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/chris/Documents/FACULTAD/2_Segundo Año/Primer Semestre/Seminario/.Net/Teorias y practicas 2025/Trabajo Final/CentroEventos/CentroEventos.UI/Components/Pages/Usuario/Baja.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xVc3VhcmlvXEJhamEucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/chris/Documents/FACULTAD/2_Segundo Año/Primer Semestre/Seminario/.Net/Teorias y practicas 2025/Trabajo Final/CentroEventos/CentroEventos.UI/Components/Pages/Usuario/Listar.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xVc3VhcmlvXExpc3Rhci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/chris/Documents/FACULTAD/2_Segundo Año/Primer Semestre/Seminario/.Net/Teorias y practicas 2025/Trabajo Final/CentroEventos/CentroEventos.UI/Components/Pages/Usuario/Modificar.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xVc3VhcmlvXE1vZGlmaWNhci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/chris/Documents/FACULTAD/2_Segundo Año/Primer Semestre/Seminario/.Net/Teorias y practicas 2025/Trabajo Final/CentroEventos/CentroEventos.UI/Components/Pages/Usuario/ModificarPermisos.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xVc3VhcmlvXE1vZGlmaWNhclBlcm1pc29zLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/chris/Documents/FACULTAD/2_Segundo Año/Primer Semestre/Seminario/.Net/Teorias y practicas 2025/Trabajo Final/CentroEventos/CentroEventos.UI/Components/Routes.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xSb3V0ZXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/chris/Documents/FACULTAD/2_Segundo Año/Primer Semestre/Seminario/.Net/Teorias y practicas 2025/Trabajo Final/CentroEventos/CentroEventos.UI/Components/_Imports.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xfSW1wb3J0cy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/chris/Documents/FACULTAD/2_Segundo Año/Primer Semestre/Seminario/.Net/Teorias y practicas 2025/Trabajo Final/CentroEventos/CentroEventos.UI/Components/Layout/MainLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcTWFpbkxheW91dC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = b-uopeu9fc6a
+
+[C:/Users/chris/Documents/FACULTAD/2_Segundo Año/Primer Semestre/Seminario/.Net/Teorias y practicas 2025/Trabajo Final/CentroEventos/CentroEventos.UI/Components/Layout/NavMenu.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcTmF2TWVudS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = b-fpokdk2a72
+
+[C:/Users/chris/Documents/FACULTAD/2_Segundo Año/Primer Semestre/Seminario/.Net/Teorias y practicas 2025/Trabajo Final/CentroEventos/CentroEventos.UI/Components/Pages/DialogoConfirmacion.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xEaWFsb2dvQ29uZmlybWFjaW9uLnJhem9y
+build_metadata.AdditionalFiles.CssScope = b-6i4vi5b2hz
+
+[C:/Users/chris/Documents/FACULTAD/2_Segundo Año/Primer Semestre/Seminario/.Net/Teorias y practicas 2025/Trabajo Final/CentroEventos/CentroEventos.UI/Components/Pages/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xJbmRleC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = b-8onls4bymz

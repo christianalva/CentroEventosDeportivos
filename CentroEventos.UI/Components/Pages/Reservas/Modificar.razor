@@ -1,0 +1,174 @@
+@page "/reservas/modificar/{reservaId:int?}"
+@rendermode InteractiveServer
+@inject ModificarReservaUseCase modificarReserva
+@inject NavigationManager navManager
+@inject IServicioSesion servicioSesion
+
+@if (_mensajeError.Any())
+{
+    <ul class="alerta-error">
+        @foreach (var error in _mensajeError)
+        {
+            <li>@error</li>
+        }
+    </ul>
+}
+
+@if (!string.IsNullOrEmpty(_mensajeExito))
+{
+  <div class="alert alerta-exito">@_mensajeExito</div>
+}
+
+
+@if(reservaSeleccionada != null ){
+    <div class="pagina-modulo">
+        <div class="contenedor-modulo">
+            <h2 class="titulo-modulo">Modificar Evento Deportivo</h2>
+        
+            <div class="grupo-campo">
+                <label class="etiqueta-campo">ID Reserva</label>
+                <input type="number" class="campo-texto" @bind="reservaCopia!.Id" />
+            </div>
+
+            <div class="grupo-campo">
+                <label class="etiqueta-campo">ID Persona</label>
+                <input type="number" class="campo-texto" @bind="reservaCopia.PersonaId" />
+            </div>
+
+            <div class="grupo-campo">
+                <label class="etiqueta-campo">ID Evento Deportivo</label>
+                <input type="number" class="campo-texto" @bind="reservaCopia.EventoDeportivoId" />
+            </div>
+
+            <div class="grupo-campo">
+                <label class="etiqueta-campo">Estado de Asistencia</label>
+                <select class="form-select" @bind="reservaCopia.EstadoAsistencia">
+                @foreach (var est in Enum.GetValues(typeof(EstadoAsistencia)).Cast<EstadoAsistencia>())
+                {
+                  <option value="@est">@est</option>
+                }
+                </select>
+
+            </div>
+
+            <button type="submit" class="boton-principal boton-guardar"@onclick="GuardarCambios">Guardar Cambios</button>
+        
+        </div>
+    </div>
+
+} else if(permitirBusqueda){
+    <div class="contenedor-buscar">
+        <h2 class="buscar-titulo">Modificar Reserva</h2>
+        <div class="buscar-form">
+            <label class="buscar-label">Ingrese el ID de la Reserva a Eliminar</label>
+            <input type="number" @bind="IdBusqueda" class="buscar-input"/>
+        </div>
+        <button class="buscar-boton" @onclick="BuscarEvento">Buscar Evento</button>
+    </div>
+}
+
+
+@code {
+    // Permite que el parámetro usuarioId se suministre desde la query string.
+    [Parameter]
+    public int? reservaId { get; set; }
+    private List<string> _mensajeError = new();
+    private string _mensajeExito = "";
+
+    private Reserva? reservaSeleccionada;
+    private Reserva? reservaCopia = new();
+    private bool permitirBusqueda = false;
+    private Usuario? usuarioEnSesion;
+    private int? IdBusqueda;
+
+    protected override void OnInitialized(){
+        if(servicioSesion.UsuarioActual == null){
+            _mensajeError.Add("Debe Iniciar sesion.");
+            return;
+        } 
+
+        if(servicioSesion.UsuarioActual != null){
+            if(!servicioSesion.UsuarioActual.Permisos.Contains(CentroEventos.Aplicacion.Enums.Permiso.ReservaModificacion)){
+                _mensajeError.Add("No posee el Permiso para realizar esta operacion.");
+                permitirBusqueda = false;
+                return;
+            } 
+
+            // Si posee para modificar reservas
+            // si se pasa el parametro por la url lo cargo automaticamente
+            if(reservaId.HasValue){
+                CargarEvento(reservaId.Value);
+                permitirBusqueda = false;
+            } else{
+                // si no se pasa por parametro a la reserva habilito la opcion de busqueda 
+                permitirBusqueda = true;
+            }
+        } 
+    }
+
+
+    private void CargarEvento(int id){
+        _mensajeError = new();
+        try{
+            // Busco a la reserva a modificar dentro del caso de uso 
+            reservaSeleccionada = modificarReserva.ObtenerParaModificar(id);
+            prepararCopia();
+            if(reservaSeleccionada == null){
+                _mensajeError.Add($"No se encontro a la Reserva con ID {id}.");
+            }
+        } catch (CentroEventos.Aplicacion.Excepciones.EntidadNotFoundException ex){
+            _mensajeError.Add(ex.Message);
+        } catch (CentroEventos.Aplicacion.Excepciones.FalloAutorizacionException ex){
+            _mensajeError.Add(ex.Message);
+        } catch(Exception ex){ 
+            _mensajeError.Add(ex.Message);
+        }
+    }
+
+    private void BuscarEvento(){
+        reservaSeleccionada = null;
+        if (IdBusqueda.HasValue)
+        {
+            CargarEvento(IdBusqueda.Value);
+        } else{
+            _mensajeError.Add("Debe ingresar un ID numérico valido.");
+        }
+    }
+
+    private void prepararCopia()
+    {
+        // Inicializo la copia con valores actuales
+        reservaCopia = new Reserva
+        {
+            Id = reservaSeleccionada!.Id,
+            PersonaId = reservaSeleccionada.PersonaId,
+            EventoDeportivoId = reservaSeleccionada.EventoDeportivoId,
+            FechaAltaReserva = reservaSeleccionada.FechaAltaReserva,
+            EstadoAsistencia = reservaSeleccionada.EstadoAsistencia
+        };
+    }
+
+    private void GuardarCambios(){
+        _mensajeError = new();
+        _mensajeExito = "";
+        if (reservaSeleccionada == null) return;
+
+        try
+        {
+            modificarReserva.Ejecutar(reservaCopia!);
+            _mensajeExito = "Cambios guardados correctamente.";
+            permitirBusqueda = false;
+        } catch (CentroEventos.Aplicacion.Excepciones.ValidacionException ex){
+            var partes = ex.Message.Split(" • ");
+            _mensajeError.AddRange(partes);
+        } catch (CentroEventos.Aplicacion.Excepciones.EntidadNotFoundException ex){
+            _mensajeError.Add(ex.Message);
+        } catch (CentroEventos.Aplicacion.Excepciones.OperacionInvalidaException ex){
+            _mensajeError.Add(ex.Message);
+        } catch (Exception ex){
+            _mensajeError.Add(ex.Message);
+        }
+
+    }
+
+}

@@ -1,0 +1,179 @@
+@page "/personas/modificar/{personaId:int?}"
+@rendermode InteractiveServer
+@inject ModificarPersonaUseCase modificarPersona
+@inject NavigationManager navManager
+@inject IServicioSesion servicioSesion
+
+@if (_errores.Any())
+{
+    <ul class="alerta-error">
+        @foreach (var error in _errores)
+        {
+            <li>@error</li>
+        }
+    </ul>
+}
+
+@if (!string.IsNullOrEmpty(_mensajeExito))
+{
+  <div class="alert alerta-exito">@_mensajeExito</div>
+}
+
+@*  
+   Modo edicion: se muestra el formulario cuando ya tenemos personaSeleccionada  
+*@
+
+@if(personaSeleccionada != null && usuarioEnSesion!= null){
+    <div class="pagina-modulo">
+        <div class="contenedor-modulo">
+            <h2 class="titulo-modulo">Modificar Persona</h2>
+
+            <div class="grupo-campo">
+                <label class="etiqueta-campo">DNI</label>
+                <input class="campo-texto" @bind="personaCopia!.Dni" />
+            </div>
+
+            <div class="grupo-campo">
+                <label class="etiqueta-campo">Nombre</label>
+                <input class="campo-texto" @bind="personaCopia.Nombre" />
+            </div>
+
+            <div class="grupo-campo">
+                <label class="etiqueta-campo">Apellido</label>
+                <input class="campo-texto" @bind="personaCopia.Apellido" />
+            </div>
+
+            <div class="grupo-campo">
+                <label class="etiqueta-campo">Email</label>
+                <input type="email" class="campo-texto" @bind="personaCopia.Email" />
+            </div>
+
+            <div class="grupo-campo">
+                <label class="etiqueta-campo">Teléfono</label>
+                <input class="campo-texto" @bind="personaCopia.Telefono" />
+            </div>
+
+            <button class="boton-principal boton-guardar" @onclick="GuardarCambios">Guardar Cambios</button>
+        </div>
+  </div>
+
+} else if(permitirBusqueda){
+    <div class="contenedor-buscar">
+        <h2 class="buscar-titulo">Buscar Persona a Modificar</h2>
+        <div class="buscar-form">
+            <label class="buscar-label">Ingrese el ID de la Persona a Eliminar</label>
+            <input type="number" class="buscar-input" @bind="IdBusqueda" />
+        </div>
+        <button class="buscar-boton" @onclick="BuscarPersona">Buscar Usuario</button>
+    </div>
+}
+
+
+@code {
+    [Parameter]
+    public int? personaId { get; set; }
+    private List<string> _errores = new();
+    private string _mensajeExito = "";
+    private Persona? personaSeleccionada;
+    private Persona? personaCopia = new();
+    private bool permitirBusqueda = false;
+    private Usuario? usuarioEnSesion;
+    private int? IdBusqueda;
+
+    protected override void OnInitialized(){
+        // Cargo usuario en sesion y valido permisos
+        usuarioEnSesion = servicioSesion.UsuarioActual;
+        if (usuarioEnSesion == null)
+        {
+          _errores.Add("Debe iniciar sesion."); 
+          return;
+        }
+
+        
+        if(!servicioSesion.UsuarioActual!.Permisos.Contains(CentroEventos.Aplicacion.Enums.Permiso.UsuarioModificacion)){
+            _errores.Add("No posee el Permiso para realizar esta operacion.");
+            permitirBusqueda = false;
+            return;
+        } 
+        
+        // Si posee para modificar personas
+        // si se pasa el parametro por la url lo cargo automaticamente
+        if(personaId.HasValue){
+            CargarPersona(personaId.Value);
+            permitirBusqueda = false;
+        } else{
+            // si no se pasa por parametro a la persona habilito la opcion de busqueda 
+            permitirBusqueda = true;
+        }
+    }
+
+
+
+    private void CargarPersona(int id){
+        _errores = new();
+        _mensajeExito = "";
+        try{
+            // Busco la persona a modificar dentro del caso de uso 
+            personaSeleccionada = modificarPersona.ObtenerParaModificar(id);
+            prepararCopia();
+            if(personaSeleccionada == null){
+                _errores.Add($"No se encontro a la persona con ID {id}.");
+            }
+        } catch(CentroEventos.Aplicacion.Excepciones.EntidadNotFoundException ex){
+            _errores.Add(ex.Message);
+        } catch(CentroEventos.Aplicacion.Excepciones.FalloAutorizacionException ex){
+            _errores.Add(ex.Message);
+        }
+    }
+
+    private void BuscarPersona(){
+        personaSeleccionada = null;
+        if (IdBusqueda.HasValue)
+        {
+            CargarPersona(IdBusqueda.Value);
+        } else{
+            _errores.Clear();
+            _errores.Add("Debe ingresar un ID numérico válido.");
+        }
+    }
+
+
+    private void prepararCopia()
+    {
+        // Inicializo la copia con valores actuales
+        personaCopia = new Persona
+        {
+            Id = personaSeleccionada!.Id,
+            Dni = personaSeleccionada.Dni,
+            Nombre = personaSeleccionada.Nombre,
+            Apellido = personaSeleccionada.Apellido,
+            Email = personaSeleccionada.Email,
+            Telefono = personaSeleccionada.Telefono
+        };
+    }
+
+    private void GuardarCambios(){
+        _errores.Clear();
+        _mensajeExito = "";
+        if (personaSeleccionada == null) return;
+
+        try
+        {
+            modificarPersona.Ejecutar(personaCopia!);
+            _mensajeExito = "Persona Modificada correctamente.";
+            permitirBusqueda = true;
+            personaSeleccionada = null;
+        }
+        catch (CentroEventos.Aplicacion.Excepciones.ValidacionException ex)
+        {
+            var partes = ex.Message.Split(" • ");
+            _errores.AddRange(partes);
+        }
+        catch (Exception ex)
+        {
+            _errores.Add(ex.Message);
+        }
+
+    }
+
+}
