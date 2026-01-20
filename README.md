@@ -75,10 +75,120 @@ El proyecto sigue los principios de Arquitectura Limpia (Clean Architecture), se
 
 <ul>
   <li>✅ <b>Validadores:</b> Cada entidad tiene su validador que verifica:</li>
+  <b>ValidadorUsuario</b>
   <ul>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
+    <li>Nombre, apellido y contraseña requeridos</li>
+    <li>Email único en el sistema</li>
+  </ul>
+  <b>ValidadorPersona</b>
+  <ul>
+    <li>Todos los campos requeridos</li>
+    <li>DNI y Email únicos</li>
+  </ul>
+  <b>ValidadorEventoDeportivo</b>
+  <ul>
+    <li>Nombre y descripción no vacíos</li>
+    <li>FechaHoraInicio >= fecha actual</li>
+    <li>CupoMaximo y DuracionHoras > 0</li>
+    <li>ResponsableId existe en Personas</li>
+  </ul>
+  <b>ValidadorReserva</b>
+  <ul>
+    <li>PersonaId y EventoDeportivoId existen</li>
+    <li>No permitir reservas duplicadas</li>
+    <li>Verificar cupo disponible</li>
   </ul>
 </ul>
+
+
+<ul>
+  <li>🚨 <b>Excepciones Personalizadas:</b></li>
+  <ul>
+    <li>ValidacionException: Datos inválidos</li>
+    <li>EntidadNotFoundException: ID no encontrado</li>
+    <li>FalloAutorizacionException: Usuario sin permiso</li>
+    <li>CupoExcedidoException: Sin cupo en evento</li>
+    <li>DuplicadoException: Entidad duplicada</li>
+    <li>OperacionInvalidaException: Operación no permitida</li>
+  </ul>
+</ul>
+
+<ul>
+  <li>🚨 <b>Enums</b></li>
+  <ul>
+    <li>Permiso</li>
+      <p>  EventoAlta, EventoModificacion, EventoBaja <br>
+           ReservaAlta, ReservaModificacion, ReservaBaja <br>
+           UsuarioAlta, UsuarioModificacion, UsuarioBaja</p>
+    <li>EstadoAsistencia</li>
+      <p>Pendiente, Presente, Ausente</p>
+  </ul>
+</ul>
+
+<h3> CentroEventos.Repositorios </h3>
+<p>Esta capa implementa la persistencia de datos usando Entity Framework Core con SQLite.</p>
+
+<ul>
+  <li>📊 <b>CentroEventosContext</b> Es el DbContext que representa la base de datos</li>
+  Configuraciones importantes:
+  <ul>
+    <li>Índices únicos en Email (Usuario y Persona)</li>
+    <li>Índice único en DNI (Persona)</li>
+    <li>Índice único compuesto (PersonaId, EventoDeportivoId) para evitar reservas duplicadas</li>
+    <li>Journal mode DELETE para reflejar cambios inmediatamente en SQLite</li>
+  </ul>
+</ul>
+
+<ul>
+  <li>🗄️ <b>Repositorios</b> Cada repositorio implementa las operaciones CRUD</li>
+</ul>
+
+<h3>🖥️ CentroEventos.UI</h3>
+<p>Interfaz de usuario desarrollada con Blazor Server.</p>
+
+<ul>
+  <li>🎨 <b> Blazor Server</b> Blazor Server es un framework para crear aplicaciones web interactivas con C# en lugar de JavaScript:</li>
+  Características:
+  <ul>
+    <li>Renderizado en el servidor</li>
+    <li>Comunicación en tiempo real con SignalR</li>
+    <li>Interactividad completa del lado del cliente</li>
+    <li>Componentes reutilizables (.razor)</li>
+  </ul>
+</ul>
+
+<ul>
+  <li>🔐 <b>Sistema de Sesión</b> El ServicioSesion se registra como Scoped, lo que significa:</li>
+  <ul>
+    <li>Una instancia por usuario/conexión</li>
+    <li>Persiste durante toda la sesión de Blazor</li>
+    <li>Se reinicia si el usuario recarga la página</li>
+    <li>No persiste entre pestañas</li>
+  </ul>
+</ul>
+
+# Cómo Ejecutar el Proyecto
+<h3>Requisitos</h3>
+<ul>
+  <li>.NET 8.0 SDK - [Descarga](https://dotnet.microsoft.com/es-es/download/dotnet/8.0).</li>
+  <li>SQLite Database Manager - [Descarga](https://sqlite.org/download.html).</li>
+  <li>Visual Studio 2022 / VS Code / Rider</li>
+</ul>
+
+<h3>Pasos</h3>
+1. **Clonar el repositorio**: 
+  ```bash
+  git clone https://github.com/christianalva/CentroEventosDeportivos.git
+  ```
+2. **Navegue hasta el directorio de la solución**:
+```bash
+   cd CentroEventos
+```
+3. **Navegue hasta el UI del proyecto**:
+```bash
+   cd CentroEventos.UI
+```
+4. **Ejecute la aplicación***:
+```bash
+   dotnet run
+```
