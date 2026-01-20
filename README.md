@@ -17,7 +17,7 @@ El sistema permite administrar personas, eventos deportivos, reservas y usuarios
 # Arquitectura del Proyecto
 El proyecto sigue los principios de Arquitectura Limpia (Clean Architecture), separando las responsabilidades en capas bien definidas y utilizando Inyección de Dependencias para el desacoplamiento.
 
-<h3> CentroEventos.Aplicacion </h3>
+<h3>📦 CentroEventos.Aplicacion </h3>
 <p>Esta es la capa de dominio/aplicación y el corazón del sistema. NO tiene dependencias de otros proyectos de la solución.</p>
 <br>
 
@@ -125,7 +125,7 @@ El proyecto sigue los principios de Arquitectura Limpia (Clean Architecture), se
   </ul>
 </ul>
 
-<h3> CentroEventos.Repositorios </h3>
+<h3>💾 CentroEventos.Repositorios </h3>
 <p>Esta capa implementa la persistencia de datos usando Entity Framework Core con SQLite.</p>
 
 <ul>
