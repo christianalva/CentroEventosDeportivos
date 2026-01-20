@@ -179,9 +179,9 @@ El proyecto sigue los principios de Arquitectura Limpia (Clean Architecture), se
 
 1. **Clonar el repositorio**: 
 
-  ```bash
+```bash
   git clone https://github.com/christianalva/CentroEventosDeportivos.git
-  ```
+```
 2. **Navegue hasta el directorio de la solución**:
 
 ```bash
