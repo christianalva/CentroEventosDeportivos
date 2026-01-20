@@ -176,19 +176,25 @@ El proyecto sigue los principios de Arquitectura Limpia (Clean Architecture), se
 </ul>
 
 <h3>Pasos</h3>
+
 1. **Clonar el repositorio**: 
+
   ```bash
   git clone https://github.com/christianalva/CentroEventosDeportivos.git
   ```
 2. **Navegue hasta el directorio de la solución**:
+
 ```bash
-   cd CentroEventos
+  cd CentroEventosDeportivos
 ```
+
 3. **Navegue hasta el UI del proyecto**:
 ```bash
    cd CentroEventos.UI
 ```
-4. **Ejecute la aplicación***:
+
+4. **Ejecute la aplicación**:
+   
 ```bash
    dotnet run
 ```
